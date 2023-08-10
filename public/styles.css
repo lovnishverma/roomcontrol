@@ -74,3 +74,31 @@
         bottom: 3px;
       }
     }
+/* Your existing styles */
+
+/* Additional styles for the icons */
+.switch .icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.switch .icon img {
+  max-width: 100%;
+  height: auto;
+  display: none;
+}
+
+.switch input:checked + .slider + .icon .on {
+  display: block;
+}
+
+.switch input:not(:checked) + .slider + .icon .off {
+  display: block;
+}
