@@ -1,14 +1,14 @@
 {
-  "name": "mqtt_relay_control",
+  "name": "mqtt_relay_app",
   "version": "1.0.0",
-  "description": "Control MQTT-based relay using Fastify",
+  "description": "Web app to control relay via MQTT",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "fastify": "^3.23.0",
-    "mqtt": "^4.2.14",
-    "rpio": "^2.0.1"
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "mqtt": "^4.2.14"
   }
 }

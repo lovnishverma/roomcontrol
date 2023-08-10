@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Relay Control</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>MQTT Led's Control</h1>
+  <label class="switch">
+    <input id="toggleSwitch" type="checkbox">
+    <span class="slider"></span>
+  </label>
+  <script>
+    $(document).ready(function () {
+      $('#toggleSwitch').change(function () {
+        const isChecked = $(this).is(':checked');
+        const command = isChecked ? '1' : '0';
+        $.post('/send-command', { command }, function (data) {
+          console.log(data);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
