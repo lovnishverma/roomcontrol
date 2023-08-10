@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mqtt = require('mqtt');
+const http = require('http'); // Import the http module
+const socketIo = require('socket.io');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -30,6 +32,9 @@ client.on('message', (topic, message) => {
     } else {
       appStatus = 'off';
     }
+
+    // Emit the updated status to connected clients via WebSocket
+    io.emit('statusUpdate', appStatus);
   }
 });
 
@@ -52,6 +57,16 @@ app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
 });
 
-app.listen(port, () => {
+// Create the http server
+const server = http.createServer(app);
+const io = socketIo(server); // Create a socket.io instance
+
+// Listen for socket connections
+io.on('connection', (socket) => {
+  console.log('A client connected');
+});
+
+// Start the HTTP server
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

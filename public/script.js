@@ -1,28 +1,33 @@
-function updateAppStatus() {
-  $.get('/app-status', function (data) {
-    const appStatus = data.status;
+// Connect to the WebSocket server
+const socket = io();
 
-    // Update the app status text
-    $('#appStatus').text('App Status: ' + appStatus);
+// Listen for status updates
+socket.on('statusUpdate', function (status) {
+  updateAppStatus(status); // Call the function to update status and toggle switch
+});
 
-    // Update the toggle switch based on app status
-    if (appStatus === 'on') {
-      $('#toggleSwitch').prop('checked', true);
-    } else {
-      $('#toggleSwitch').prop('checked', false);
-    }
-  });
+// Function to update app status and toggle switch
+function updateAppStatus(appStatus) {
+  $('#appStatus').text('App Status: ' + appStatus);
+  $('#toggleSwitch').prop('checked', appStatus === 'on');
 }
 
 $(document).ready(function () {
-  updateAppStatus(); // Initial update
+  // Initial update
+  $.get('/app-status', function (data) {
+    updateAppStatus(data.status);
+  });
 
   $('#toggleSwitch').change(function () {
     const isChecked = $(this).is(':checked');
     const command = isChecked ? '1' : '0';
     $.post('/send-command', { command }, function (data) {
       console.log(data);
-      updateAppStatus(); // Update app status and toggle switch after sending command
+
+      // After sending command, update app status and toggle switch
+      $.get('/app-status', function (data) {
+        updateAppStatus(data.status);
+      });
     });
   });
 });
