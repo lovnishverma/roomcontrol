@@ -82,11 +82,9 @@
   top: 50%;
   transform: translateY(-50%);
   left: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 30px; /* Adjust as needed */
+  height: 30px; /* Adjust as needed */
+  text-align: center;
 }
 
 .switch .icon img {
@@ -101,4 +99,12 @@
 
 .switch input:not(:checked) + .slider + .icon .off {
   display: block;
+}
+
+/* Responsive styles for the bulb icon */
+@media (max-width: 480px) {
+  .switch .icon {
+    width: 24px;
+    height: 24px;
+  }
 }
