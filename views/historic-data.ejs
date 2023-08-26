@@ -10,7 +10,7 @@
 </head>
 <body>
   <div class="container">
-    <h6 class="text-center mt-4">Historical Data</h6>
+    <h6 class="text-center mt-4"> Real-Time Historical Data</h6>
     <div class="table-responsive">
       <table class="table table-striped mt-2">
         <thead>
@@ -35,33 +35,8 @@
     </div>
   </div>
 
- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
-
-    
-    <script>
-  // Fetch and display historical data
-  $(document).ready(function() {
-    const socket = io();
-
-    socket.on('connect', function() {
-      console.log('Socket connected');
-    });
-
-    socket.on('newEntry', function(entry) {
-      console.log('New entry received:', entry);
-      const newRow = $('<tr>');
-      newRow.append($('<td>').text(entry.date));
-      newRow.append($('<td>').text(entry.time));
-      newRow.append($('<td>').text(entry.command));
-      newRow.append($('<td>').text(entry.status));
-      $('tbody').prepend(newRow);
-    });
-
-    socket.on('disconnect', function() {
-      console.log('Socket disconnected');
-    });
-  });
-</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+  <script src="Historical_Data_Script.js"></script>
 
 </body>
 </html>
