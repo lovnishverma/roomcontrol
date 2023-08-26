@@ -68,6 +68,14 @@ client.on('message', (topic, message) => {
           console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
+          
+          // Emit newEntry event to connected clients
+          io.emit('newEntry', {
+            date: formattedDate,
+            time: formattedTime,
+            command: receivedCommand,
+            status: appStatus
+          });
         }
       }
     );
@@ -114,8 +122,6 @@ app.get('/historic-data', (req, res) => {
     }
   });
 });
-
-
 
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
