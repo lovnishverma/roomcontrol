@@ -9,6 +9,8 @@ const moment = require('moment-timezone');
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.set('view engine', 'ejs'); // Set EJS as the view engine
+
 const brokerUrl = 'mqtt://broker.hivemq.com';
 const mqttTopic = 'mytopic/nielit';
 const qos = 0;
@@ -108,10 +110,11 @@ app.get('/historic-data', (req, res) => {
       console.error('Error retrieving data from the database:', err.message);
       res.status(500).send('Internal Server Error');
     } else {
-      res.json(rows);
+      res.render('historic-data', { rows: rows });
     }
   });
 });
+
 
 
 server.listen(port, () => {

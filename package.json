@@ -12,6 +12,7 @@
     "mqtt": "^4.2.14",
     "socket.io": "^4.2.0",
     "sqlite3": "^5.1.6",
-    "moment-timezone": "^0.5.43"
+    "moment-timezone": "^0.5.43",
+    "ejs": "^3.1.9"
   }
 }

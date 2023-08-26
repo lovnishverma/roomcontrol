@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- ... (other head content) ... -->
+</head>
+<body>
+  <div class="container">
+    <h6 class="text-center mt-4">Historical Data</h6>
+    <div class="table-responsive">
+      <table class="table table-striped mt-2">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Command</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows.forEach(function(row) { %>
+            <tr>
+              <td><%= row.date %></td>
+              <td><%= row.time %></td>
+              <td><%= row.command %></td>
+              <td><%= row.status %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
