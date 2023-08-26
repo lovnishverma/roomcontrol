@@ -10,6 +10,8 @@
     "express": "^4.17.1",
     "body-parser": "^1.19.0",
     "mqtt": "^4.2.14",
-    "socket.io": "^4.2.0"
+    "socket.io": "^4.2.0",
+    "sqlite3": "^5.1.6",
+    "moment-timezone": "^0.5.43"
   }
 }

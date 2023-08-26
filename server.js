@@ -1,23 +1,43 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mqtt = require('mqtt');
-const http = require('http'); // Import the http module
+const http = require('http');
 const socketIo = require('socket.io');
+const sqlite3 = require('sqlite3').verbose();
+const moment = require('moment-timezone');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// MQTT broker configuration
-const brokerUrl = 'mqtt://broker.hivemq.com'; // Update with your broker's URL
+const brokerUrl = 'mqtt://broker.hivemq.com';
 const mqttTopic = 'mytopic/nielit';
 const qos = 0;
 
 const client = mqtt.connect(brokerUrl);
 
-let appStatus = 'off'; // Initialize app status
+let appStatus = 'off';
+
+// Connect to the SQLite database
+const db = new sqlite3.Database('historic_data.db', (err) => {
+  if (err) {
+    console.error('Error connecting to the database:', err.message);
+  } else {
+    console.log('Connected to the SQLite database');
+    // Create the table if it doesn't exist
+    db.run(`
+      CREATE TABLE IF NOT EXISTS historic_data (
+        id INTEGER PRIMARY KEY,
+        date TEXT,
+        time TEXT,
+        command TEXT,
+        status TEXT
+      )
+    `);
+  }
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public')); // Serve static files from "public" directory
+app.use(express.static('public'));
 
 client.on('connect', () => {
   console.log('Connected to MQTT broker');
@@ -27,13 +47,29 @@ client.on('connect', () => {
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
     const receivedCommand = message.toString();
+    const currentDate = moment().tz('Asia/Kolkata');
+    const formattedDate = currentDate.format('YYYY-MM-DD');
+    const formattedTime = currentDate.format('HH:mm:ss');
+
     if (receivedCommand === '1') {
       appStatus = 'on';
     } else {
       appStatus = 'off';
     }
 
-    // Emit the updated status to connected clients via WebSocket
+    // Insert data into the SQLite database
+    db.run(
+      'INSERT INTO historic_data (date, time, command, status) VALUES (?, ?, ?, ?)',
+      [formattedDate, formattedTime, receivedCommand, appStatus],
+      (err) => {
+        if (err) {
+          console.error('Error inserting data into database:', err.message);
+        } else {
+          console.log('Data has been inserted into the database');
+        }
+      }
+    );
+
     io.emit('statusUpdate', appStatus);
   }
 });
@@ -42,7 +78,6 @@ app.post('/send-command', (req, res) => {
   const command = req.body.command;
   client.publish(mqttTopic, command.toString(), { qos });
 
-  // Update app status based on command
   if (command === '1') {
     appStatus = 'on';
   } else {
@@ -52,21 +87,33 @@ app.post('/send-command', (req, res) => {
   res.send(`Command sent: ${command}`);
 });
 
-// Route to get the app status
 app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
 });
 
-// Create the http server
 const server = http.createServer(app);
-const io = socketIo(server); // Create a socket.io instance
+const io = socketIo(server);
 
-// Listen for socket connections
 io.on('connection', (socket) => {
   console.log('A client connected');
+  socket.on('disconnect', () => {
+    console.log('A client disconnected');
+  });
 });
 
-// Start the HTTP server
+app.get('/historic-data', (req, res) => {
+  // Retrieve data from the database and order by the most recent entries
+  db.all('SELECT * FROM historic_data ORDER BY date DESC, time DESC', [], (err, rows) => {
+    if (err) {
+      console.error('Error retrieving data from the database:', err.message);
+      res.status(500).send('Internal Server Error');
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

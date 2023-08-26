@@ -3,25 +3,33 @@
 	margin: 0;
 	padding: 0;
 }
+
 :root {
-	/* minFontSize + (maxFontSize - minFontSize) * (100vw - minVWidth)/(maxVWidth - minVWidth) */
-	font-size: calc(64px + (80 - 64) * (100vw - 320px)/(960 - 320));
+	font-size: calc(45px + (80 - 64) * (100vw - 320px)/(960 - 320));
 }
-body, input {
+
+h3 {
+	font-size: 0.5em;
+  line-height: 1.5; }
+  input {
 	font-size: 1em;
 	line-height: 1.5;
 }
+
 body {
 	background: #bbb;
 }
+
 input {
 	display: block;
 	margin-bottom: 1.5em;
 }
+
 main {
 	padding: 1.5em 0 0 0;
 	text-align: center;	
 }
+
 .l {
 	background-color: rgba(0,0,0,0.7);
 	border-radius: 0.75em;
@@ -38,10 +46,12 @@ main {
 	-moz-appearance: none;
 	appearance: none;
 }
+
 .l:before, .l:after {
 	content: "";
 	display: block;
 }
+
 .l:before {
 	background-color: #d7d7d7;
 	border-radius: 50%;
@@ -50,6 +60,7 @@ main {
 	transition: background-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
 	z-index: 1;
 }
+
 .l:after {
 	background:
 		linear-gradient(transparent 50%, rgba(0,0,0,0.15) 0) 0 50% / 50% 100%,
@@ -65,21 +76,29 @@ main {
 	width: 1.2em;
 	height: 1em;
 }
+
 /* Checked */
 .l:checked {
 	background-color: rgba(0,0,0,0.45);
 	box-shadow: 0.125em 0.125em 0 0.125em rgba(0,0,0,0.1) inset;
 }
+
 .l:checked:before {
 	background-color: currentColor;
-	transform: translateX(125%)
+	transform: translateX(125%);
 }
+
 .l:checked:after {
 	border-left-color: currentColor;
 	transform: translateX(-2.5%) rotateY(180deg);
 }
+
+/* Unchecked (Off) */
+.l:not(:checked) {
+	background-color: black;
+}
+
 /* Other States */
 .l:focus {
-	/* Usually an anti-A11Y practice but set to remove an annoyance just for this demo */
 	outline: 0;
 }

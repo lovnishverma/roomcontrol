@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <title>Historical Data</title>
+  <link rel="icon" type="image/x-icon" href="https://cdn.glitch.global/08e63b66-17e6-4a37-b447-cb3acf6954ba/favicon.ico?v=1691737780870">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+    .container {
+      padding: 20px;
+    }
+    h6 {
+      margin-top: 0;
+    }
+    .table {
+      background-color: #ffffff;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    }
+    .table th, .table td {
+      vertical-align: middle;
+    }
+    .mt-2 {
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h6 class="text-center mt-4">Historical Data</h6>
+    <div class="table-responsive">
+      <table class="table mt-2">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Command</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="dataBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Fetch and display historical data
+    $(document).ready(function() {
+      $.get('/historic-data', function(data) {
+        var dataBody = $('#dataBody');
+        dataBody.empty();
+        data.forEach(function(row) {
+          var newRow = $('<tr>');
+          newRow.append($('<td>').text(row.date));
+          newRow.append($('<td>').text(row.time));
+          newRow.append($('<td>').text(row.command));
+          newRow.append($('<td>').text(row.status));
+          dataBody.append(newRow);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
