@@ -79,6 +79,7 @@ client.on('message', (topic, message) => {
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
+    const username = req.session.loggedInUser; // Get the username from the session
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -88,20 +89,21 @@ client.on('message', (topic, message) => {
 
     // Insert data into the SQLite database
     db.run(
-      'INSERT INTO historic_data (date, time, command, status) VALUES (?, ?, ?, ?)',
-      [formattedDate, formattedTime, receivedCommand, appStatus],
+      'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
+      [formattedDate, formattedTime, receivedCommand, appStatus, username],
       (err) => {
         if (err) {
           console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
-          
+
           // Emit newEntry event to connected clients
           io.emit('newEntry', {
             date: formattedDate,
             time: formattedTime,
             command: receivedCommand,
-            status: appStatus
+            status: appStatus,
+            username: username
           });
         }
       }
@@ -110,6 +112,17 @@ client.on('message', (topic, message) => {
     io.emit('statusUpdate', appStatus);
   }
 });
+
+
+// Middleware to check if user is logged in
+
+const isLoggedIn = (req, res, next) => {
+  if (req.session.loggedInUser) {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+};
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
@@ -140,7 +153,7 @@ io.on('connection', (socket) => {
 });
 
 
-app.get('/historic-data', (req, res) => {
+app.get('/historic-data', isLoggedIn, (req, res) => {
   // Retrieve data from the database and order by the most recent entries
   db.all('SELECT * FROM historic_data ORDER BY date DESC, time DESC', [], (err, rows) => {
     if (err) {
@@ -152,6 +165,8 @@ app.get('/historic-data', (req, res) => {
     }
   });
 });
+
+
 
 // Login route
 app.post('/login', (req, res) => {
@@ -228,18 +243,6 @@ app.post('/delete-data', (req, res) => {
     }
   });
 });
-
-// Middleware to check if user is logged in
-
-const isLoggedIn = (req, res, next) => {
-  if (req.session.loggedInUser) {
-    next();
-  } else {
-    res.redirect('/login');
-  }
-};
-
-
 
 // Render home page for logged-in user
 app.get('/', isLoggedIn, (req, res) => {
