@@ -80,7 +80,8 @@ client.on('message', (topic, message)  => {
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
-    const username = app.get('username'); // Get the username from the app.locals
+     // Retrieve the username from app.locals
+    const username = app.locals.username;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
