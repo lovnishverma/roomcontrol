@@ -152,6 +152,9 @@ io.on('connection', (socket) => {
 });
 
 app.get('/historic-data', isLoggedIn, (req, res) => {
+  console.log('Username in session:', req.session.loggedInUser); // Check if username is in session
+  console.log('Username in app.locals:', app.locals.username); // Check if username is in app.locals
+
   // Retrieve data from the database and order by the most recent entries
   db.all('SELECT * FROM historic_data ORDER BY date DESC, time DESC', [], (err, rows) => {
     if (err) {
@@ -163,6 +166,7 @@ app.get('/historic-data', isLoggedIn, (req, res) => {
     }
   });
 });
+
 
 // Login route
 app.post('/login', (req, res) => {
