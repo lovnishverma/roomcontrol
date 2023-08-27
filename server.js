@@ -49,7 +49,8 @@ const db = new sqlite3.Database('historic_data.db', (err) => {
         date TEXT,
         time TEXT,
         command TEXT,
-        status TEXT
+        status TEXT,
+        username TEXT
       )
     `);
   }
@@ -79,7 +80,7 @@ client.on('message', (topic, message) => {
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
-    const username = req.session.loggedInUser; // Get the username from the session
+    const username = app.get('username'); // Get the username from the app.locals
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -113,7 +114,6 @@ client.on('message', (topic, message) => {
   }
 });
 
-
 // Middleware to check if user is logged in
 
 const isLoggedIn = (req, res, next) => {
@@ -141,7 +141,6 @@ app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
 });
 
-
 const server = http.createServer(app);
 const io = socketIo(server);
 
@@ -151,7 +150,6 @@ io.on('connection', (socket) => {
     console.log('A client disconnected');
   });
 });
-
 
 app.get('/historic-data', isLoggedIn, (req, res) => {
   // Retrieve data from the database and order by the most recent entries
@@ -165,8 +163,6 @@ app.get('/historic-data', isLoggedIn, (req, res) => {
     }
   });
 });
-
-
 
 // Login route
 app.post('/login', (req, res) => {
@@ -186,6 +182,7 @@ app.post('/login', (req, res) => {
         } else if (result) {
           // Set session variable to indicate user is logged in
           req.session.loggedInUser = username;
+          app.locals.username = username; // Store username in app.locals
           res.redirect('/'); // Redirect to the home page after successful login
         } else {
           res.status(401).json({ error: 'Authentication failed' });
@@ -194,6 +191,7 @@ app.post('/login', (req, res) => {
     }
   });
 });
+
 // Render login form
 app.get('/login', (req, res) => {
   res.render('login');
@@ -214,7 +212,11 @@ app.post('/register', (req, res) => {
         (err) => {
           if (err) {
             console.error('Error registering user:', err.message);
-            res.status(400).json({ error: 'User registration failed' });
+            if (err.code === 'SQLITE_CONSTRAINT') {
+              res.status(400).json({ error: 'Username already exists' });
+            } else {
+              res.status(400).json({ error: 'User registration failed' });
+            }
           } else {
             console.log('User registered:', username);
             res.redirect('/login'); // Redirect to the login page after successful registration
@@ -224,6 +226,7 @@ app.post('/register', (req, res) => {
     }
   });
 });
+
 
 // Render register form
 app.get('/register', (req, res) => {
@@ -268,7 +271,6 @@ app.post('/logout', (req, res) => {
     }
   });
 });
-
 
 // Other routes
 // ...
