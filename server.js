@@ -79,49 +79,57 @@ const isLoggedIn = (req, res, next) => {
   }
 };
 
-const handleMqttMessage = (username, io, topic, message) => {
-  if (topic === mqttTopic) {
-    const receivedCommand = message.toString();
-    const currentDate = moment().tz('Asia/Kolkata');
-    const formattedDate = currentDate.format('YYYY-MM-DD');
-    const formattedTime = currentDate.format('hh:mm:ss A');
 
-    if (receivedCommand === '1') {
-      appStatus = 'on';
-    } else {
-      appStatus = 'off';
-    }
-
-    // Insert data into the SQLite database
-    db.run(
-      'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-      [formattedDate, formattedTime, receivedCommand, appStatus, username],
-      (err) => {
-        if (err) {
-          console.error('Error inserting data into database:', err.message);
-        } else {
-          console.log('Data has been inserted into the database');
-
-          // Emit newEntry event to connected clients
-          io.emit('newEntry', {
-            date: formattedDate,
-            time: formattedTime,
-            command: receivedCommand,
-            status: appStatus,
-            username: username
-          });
-        }
-      }
-    );
-    io.emit('statusUpdate', appStatus);
-  }
-};
-
-
-client.on('message', (topic, message) => {
-  handleMqttMessage(topic, message);
+client.on('connect', () => {
+  console.log('Connected to MQTT broker');
+  client.subscribe(mqttTopic, { qos });
 });
 
+const handleMqttMessage = (username, receivedCommand, io) => {
+  const currentDate = moment().tz('Asia/Kolkata');
+  const formattedDate = currentDate.format('YYYY-MM-DD');
+  const formattedTime = currentDate.format('hh:mm:ss A');
+  
+  let appStatus;
+  
+  if (receivedCommand === '1') {
+    appStatus = 'on';
+  } else {
+    appStatus = 'off';
+  }
+  
+  // Insert data into the SQLite database
+  db.run(
+    'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
+    [formattedDate, formattedTime, receivedCommand, appStatus, username],
+    (err) => {
+      if (err) {
+        console.error('Error inserting data into database:', err.message);
+      } else {
+        console.log('Data has been inserted into the database');
+        
+        // Emit newEntry event to connected clients
+        io.emit('newEntry', {
+          date: formattedDate,
+          time: formattedTime,
+          command: receivedCommand,
+          status: appStatus,
+          username: username
+        });
+      }
+    }
+  );
+  
+  io.emit('statusUpdate', appStatus);
+};
+
+client.on('message', (topic, message) => {
+  if (topic === mqttTopic) {
+    const receivedCommand = message.toString();
+    const username = req.session.loggedInUser; // Retrieve the username from the session
+    handleMqttMessage(username, receivedCommand, io);
+  }
+});
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
@@ -152,8 +160,6 @@ io.on('connection', (socket) => {
 
 app.get('/historic-data', isLoggedIn, (req, res) => {
   console.log('Username in session:', req.session.loggedInUser);
-  console.log('Username in app.locals:', req.session.loggedInUser); 
-
   // Retrieve data from the database and order by the most recent entries
   db.all('SELECT * FROM historic_data ORDER BY date DESC, time DESC', [], (err, rows) => {
     if (err) {
