@@ -78,10 +78,12 @@ client.on('connect', () => {
 
 // ...
 
+// ...
+
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Create a map to store the mapping between MQTT topics and socket IDs
+// Create a map to store the mapping between MQTT topics and usernames
 const clientSocketMap = {};
 
 io.on('connection', (socket) => {
@@ -92,17 +94,17 @@ io.on('connection', (socket) => {
     socket.loggedInUser = username;
   });
 
-  // Store the MQTT topic and socket ID in the map
   socket.on('mqttTopic', (topic) => {
-    clientSocketMap[topic] = socket.id;
+    // Store the MQTT topic and associated username
+    clientSocketMap[topic] = socket.loggedInUser;
   });
 
   socket.on('disconnect', () => {
     console.log('A client disconnected');
 
-    // Remove the MQTT topic from the map when a client disconnects
+    // Remove the socket information from the map when a client disconnects
     for (const topic in clientSocketMap) {
-      if (clientSocketMap[topic] === socket.id) {
+      if (clientSocketMap[topic] === socket.loggedInUser) {
         delete clientSocketMap[topic];
       }
     }
@@ -118,10 +120,8 @@ client.on('message', (topic, message) => {
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    // Access the stored username from the socket object
-    const socketId = clientSocketMap[topic];
-    const socket = io.sockets.sockets.get(socketId);
-    const username = socket.loggedInUser;
+    // Retrieve the username associated with the MQTT topic
+    const username = clientSocketMap[topic] || null;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -157,6 +157,8 @@ client.on('message', (topic, message) => {
 
 // ...
 
+
+// ...
 
 
 // Middleware to check if user is logged in
