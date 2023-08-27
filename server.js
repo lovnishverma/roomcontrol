@@ -74,6 +74,43 @@ client.on('connect', () => {
   client.subscribe(mqttTopic, { qos });
 });
 
+// ...
+
+// ...
+
+const server = http.createServer(app);
+const io = socketIo(server);
+
+// Create a map to store the mapping between MQTT topics and socket IDs
+const clientSocketMap = {};
+
+io.on('connection', (socket) => {
+  console.log('A client connected');
+
+  // Store the username in the socket object upon connection
+  socket.on('loggedInUser', (username) => {
+    socket.loggedInUser = username;
+  });
+
+  // Store the MQTT topic and socket ID in the map
+  socket.on('mqttTopic', (topic) => {
+    clientSocketMap[topic] = socket.id;
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A client disconnected');
+
+    // Remove the MQTT topic from the map when a client disconnects
+    for (const topic in clientSocketMap) {
+      if (clientSocketMap[topic] === socket.id) {
+        delete clientSocketMap[topic];
+      }
+    }
+  });
+});
+
+// ...
+
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
     const receivedCommand = message.toString();
@@ -81,7 +118,10 @@ client.on('message', (topic, message) => {
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    const username = io.loggedInUser; // Access the stored username from io object
+    // Access the stored username from the socket object
+    const socketId = clientSocketMap[topic];
+    const socket = io.sockets.sockets.get(socketId);
+    const username = socket.loggedInUser;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -115,6 +155,10 @@ client.on('message', (topic, message) => {
   }
 });
 
+// ...
+
+
+
 // Middleware to check if user is logged in
 
 const isLoggedIn = (req, res, next) => {
@@ -140,22 +184,6 @@ app.post('/send-command', (req, res) => {
 
 app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
-});
-
-const server = http.createServer(app);
-const io = socketIo(server);
-
-io.on('connection', (socket) => {
-  console.log('A client connected');
-
-  // Store the username in the socket object upon connection
-  socket.on('loggedInUser', (username) => {
-    socket.loggedInUser = username;
-  });
-
-  socket.on('disconnect', () => {
-    console.log('A client disconnected');
-  });
 });
 
 app.get('/historic-data', isLoggedIn, (req, res) => {
@@ -189,7 +217,7 @@ app.post('/login', (req, res) => {
         } else if (result) {
           // Set session variable to indicate user is logged in
           req.session.loggedInUser = username;
-          res.render('home'); // Redirect to the home page after successful login
+          res.redirect('/'); // Redirect to the home page after successful login
         } else {
           res.status(401).json({ error: 'Authentication failed' });
         }
