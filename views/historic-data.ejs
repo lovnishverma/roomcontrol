@@ -76,21 +76,21 @@
       <table class="table table-striped table-dark">
         <thead>
           <tr>
-            <th>Username</th>
             <th>Date</th>
             <th>Time</th>
             <th>Command</th>
             <th>Status</th>
+            <th>Username</th>
           </tr>
         </thead>
         <tbody>
           <% rows.forEach(function(row) { %>
             <tr>
-              <td><%= row.username %></td>
               <td><%= row.date %></td>
               <td><%= row.time %></td>
               <td><%= row.command %></td>
               <td><%= row.status %></td>
+              <td><%= row.username %></td>
             </tr>
           <% }); %>
         </tbody>
