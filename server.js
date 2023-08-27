@@ -109,21 +109,19 @@ io.on('connection', (socket) => {
       }
     }
   });
-});
 
-// ...
+  socket.on('sendCommand', (command) => {
+    // Retrieve the MQTT topic associated with the command
+    const topic = mqttTopic;
 
-client.on('message', (topic, message) => {
-  if (topic === mqttTopic) {
-    const receivedCommand = message.toString();
-    const currentDate = moment().tz('Asia/Kolkata');
-    const formattedDate = currentDate.format('YYYY-MM-DD');
-    const formattedTime = currentDate.format('hh:mm:ss A');
+    // Retrieve the username of the logged-in user from the socket
+    const username = socket.loggedInUser;
 
-    // Retrieve the username associated with the MQTT topic
-    const username = clientSocketMap[topic] || null;
+    // Publish the command to the MQTT topic
+    client.publish(topic, command.toString(), { qos });
 
-    if (receivedCommand === '1') {
+    // Update the app status based on the command
+    if (command === '1') {
       appStatus = 'on';
     } else {
       appStatus = 'off';
@@ -132,7 +130,7 @@ client.on('message', (topic, message) => {
     // Insert data into the SQLite database
     db.run(
       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-      [formattedDate, formattedTime, receivedCommand, appStatus, username],
+      [formattedDate, formattedTime, command, appStatus, username],
       (err) => {
         if (err) {
           console.error('Error inserting data into database:', err.message);
@@ -143,7 +141,7 @@ client.on('message', (topic, message) => {
           io.emit('newEntry', {
             date: formattedDate,
             time: formattedTime,
-            command: receivedCommand,
+            command: command,
             status: appStatus,
             username: username
           });
@@ -152,14 +150,11 @@ client.on('message', (topic, message) => {
     );
 
     io.emit('statusUpdate', appStatus);
-  }
+  });
 });
 
-// ...
-
 
 // ...
-
 
 // Middleware to check if user is logged in
 
@@ -262,7 +257,6 @@ app.post('/register', (req, res) => {
     }
   });
 });
-
 
 // Render register form
 app.get('/register', (req, res) => {
