@@ -20,6 +20,8 @@ const qos = 0;
 
 const client = mqtt.connect(brokerUrl);
 
+const clientSocketMap = {};
+
 let loggedInUsername = null;
 let appStatus = 'off';
 
