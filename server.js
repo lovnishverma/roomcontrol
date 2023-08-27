@@ -123,6 +123,20 @@ app.get('/historic-data', (req, res) => {
   });
 });
 
+app.post('/delete-data', (req, res) => {
+  // Delete all data from the historic_data table
+  db.run('DELETE FROM historic_data', (err) => {
+    if (err) {
+      console.error('Error deleting data:', err.message);
+      res.status(500).json({ error: 'An error occurred while deleting data.' });
+    } else {
+      console.log('Historic data deleted');
+      res.sendStatus(200);
+    }
+  });
+});
+
+
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

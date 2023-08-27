@@ -5,10 +5,32 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     /* Add your custom styles here */
+    
+  body.dark-mode {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+
+  .table.dark-mode {
+    background-color: #2d2d2d;
+    color: #ffffff;
+  }
+
+  .table.dark-mode th,
+  .table.dark-mode td {
+    border-color: #555555;
+  }
+
+  .btn.dark-mode {
+    background-color: #333333;
+    border-color: #333333;
+    color: #ffffff;
+  }
+
   </style>
   <!-- ... (other head content) ... -->
 </head>
-<body>
+<body class="<%= darkMode ? 'dark-mode' : '' %>">
   <div class="container">
     <h6 class="text-center mt-4"> Real-Time Historical Data</h6>
     <div class="table-responsive">
@@ -19,6 +41,7 @@
             <th>Time</th>
             <th>Command</th>
             <th>Status</th>
+            <button class="btn btn-danger dark-mode" id="deleteDataButton">Delete Data</button>
           </tr>
         </thead>
         <tbody>
