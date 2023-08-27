@@ -77,6 +77,8 @@ client.on('connect', () => {
   client.subscribe(mqttTopic, { qos });
 });
 
+// ... (other code remains the same)
+
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
     const receivedCommand = message.toString();
@@ -86,7 +88,7 @@ client.on('message', (topic, message) => {
 
     // Retrieve the username associated with the socket that sent the message
     const socketId = clientSocketMap[topic];
-    const username = socketUserMap[socketId] || loggedInUsername;
+    const socketUsername = socketUserMap[socketId] || loggedInUsername;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -97,7 +99,7 @@ client.on('message', (topic, message) => {
     // Insert data into the SQLite database
     db.run(
       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-      [formattedDate, formattedTime, receivedCommand, appStatus, username],
+      [formattedDate, formattedTime, receivedCommand, appStatus, socketUsername],
       (err) => {
         if (err) {
           console.error('Error inserting data into database:', err.message);
@@ -110,7 +112,7 @@ client.on('message', (topic, message) => {
             time: formattedTime,
             command: receivedCommand,
             status: appStatus,
-            username: username,
+            username: socketUsername,
           });
         }
       }
@@ -119,8 +121,6 @@ client.on('message', (topic, message) => {
     io.emit('statusUpdate', appStatus);
   }
 });
-
-
 
 // Middleware to check if user is logged in
 
