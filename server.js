@@ -100,14 +100,66 @@ app.get('/historic-data', (req, res) => {
   // ... Code for retrieving and rendering historic data ...
 });
 
-// Registration route
-app.post('/register', (req, res) => {
-  // ... Code for user registration using bcrypt ...
-});
-
 // Login route
 app.post('/login', (req, res) => {
-  // ... Code for user login using bcrypt and session ...
+  const { username, password } = req.body;
+
+  userDb.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
+    if (err) {
+      console.error('Error retrieving user data:', err.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else if (!user) {
+      res.status(401).json({ error: 'Authentication failed' });
+    } else {
+      bcrypt.compare(password, user.password, (bcryptErr, result) => {
+        if (bcryptErr) {
+          console.error('Error comparing passwords:', bcryptErr.message);
+          res.status(500).json({ error: 'Internal Server Error' });
+        } else if (result) {
+          // Set session variable to indicate user is logged in
+          req.session.loggedInUser = username;
+          res.redirect('/'); // Redirect to the home page after successful login
+        } else {
+          res.status(401).json({ error: 'Authentication failed' });
+        }
+      });
+    }
+  });
+});
+// Render login form
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+// Registration route
+app.post('/register', (req, res) => {
+  const { username, password } = req.body;
+
+  bcrypt.hash(password, 10, (err, hashedPassword) => {
+    if (err) {
+      console.error('Error hashing password:', err.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      userDb.run(
+        'INSERT INTO users (username, password) VALUES (?, ?)',
+        [username, hashedPassword],
+        (err) => {
+          if (err) {
+            console.error('Error registering user:', err.message);
+            res.status(400).json({ error: 'User registration failed' });
+          } else {
+            console.log('User registered:', username);
+            res.redirect('/login'); // Redirect to the login page after successful registration
+          }
+        }
+      );
+    }
+  });
+});
+
+// Render register form
+app.get('/register', (req, res) => {
+  res.render('register');
 });
 
 // Delete data route
@@ -118,35 +170,39 @@ app.post('/delete-data', (req, res) => {
 // Middleware to check if user is logged in
 const isLoggedIn = (req, res, next) => {
   if (req.session.loggedInUser) {
-    next();
+    res.redirect('/home'); // Redirect to the home page if user is logged in
   } else {
-    res.redirect('/login');
+    next();
   }
 };
 
-// Render login form
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-
-  // Compare the provided password with the hashed password in the database
-  // Set session variables on successful login
-});
-
-// Render register form
-app.post('/register', (req, res) => {
-  const { username, password } = req.body;
-
-  // Hash the password and insert user data into the users table
-  bcrypt.hash(password, 10, (err, hashedPassword) => {
-    // Handle registration success or failure
-  });
-});
 
 
 // Render home page for logged-in user
 app.get('/', isLoggedIn, (req, res) => {
-  // ... Code for rendering the home page ...
+  // Retrieve user-specific data or perform any other actions you need
+  // For example, you can fetch additional data from the database based on the logged-in user
+
+  res.render('home', {
+    username: req.session.loggedInUser,
+    // Pass any additional data you want to display on the home page
+  });
 });
+
+// Define the /logout route
+app.post('/logout', (req, res) => {
+  // Clear the user's session data to log them out
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Error while logging out:', err);
+    } else {
+      console.log('User logged out');
+      // Redirect the user to the login page after logging out
+      res.redirect('/login');
+    }
+  });
+});
+
 
 // Other routes
 // ...
