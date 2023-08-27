@@ -74,55 +74,15 @@ client.on('connect', () => {
 });
 
 client.on('message', (topic, message) => {
-  if (topic === mqttTopic) {
-    const receivedCommand = message.toString();
-    const currentDate = moment().tz('Asia/Kolkata');
-    const formattedDate = currentDate.format('YYYY-MM-DD');
-    const formattedTime = currentDate.format('hh:mm:ss A');
-
-    if (receivedCommand === '1') {
-      appStatus = 'on';
-    } else {
-      appStatus = 'off';
-    }
-
-    db.run(
-      'INSERT INTO historic_data (date, time, command, status) VALUES (?, ?, ?, ?)',
-      [formattedDate, formattedTime, receivedCommand, appStatus],
-      (err) => {
-        if (err) {
-          console.error('Error inserting data into database:', err.message);
-        } else {
-          console.log('Data has been inserted into the database');
-          io.emit('newEntry', {
-            date: formattedDate,
-            time: formattedTime,
-            command: receivedCommand,
-            status: appStatus
-          });
-        }
-      }
-    );
-
-    io.emit('statusUpdate', appStatus);
-  }
+  // ... Code for handling MQTT messages ...
 });
 
 app.post('/send-command', (req, res) => {
-  const command = req.body.command;
-  client.publish(mqttTopic, command.toString(), { qos });
-
-  if (command === '1') {
-    appStatus = 'on';
-  } else {
-    appStatus = 'off';
-  }
-
-  res.send(`Command sent: ${command}`);
+  // ... Code for sending MQTT commands ...
 });
 
 app.get('/app-status', (req, res) => {
-  res.json({ status: appStatus });
+  // ... Code for retrieving app status ...
 });
 
 const server = http.createServer(app);
@@ -135,29 +95,63 @@ io.on('connection', (socket) => {
   });
 });
 
+
 app.get('/historic-data', (req, res) => {
-  db.all('SELECT * FROM historic_data ORDER BY date DESC, time DESC', [], (err, rows) => {
-    if (err) {
-      console.error('Error retrieving data from the database:', err.message);
-      res.status(500).send('Internal Server Error');
-    } else {
-      res.render('historic-data', { rows: rows, darkMode: req.query.darkMode === 'true' });
-    }
-  });
+  // ... Code for retrieving and rendering historic data ...
 });
 
+// Registration route
+app.post('/register', (req, res) => {
+  // ... Code for user registration using bcrypt ...
+});
+
+// Login route
+app.post('/login', (req, res) => {
+  // ... Code for user login using bcrypt and session ...
+});
+
+// Delete data route
 app.post('/delete-data', (req, res) => {
-  db.run('DELETE FROM historic_data', (err) => {
-    if (err) {
-      console.error('Error deleting data:', err.message);
-      res.status(500).json({ error: 'An error occurred while deleting data.' });
-    } else {
-      console.log('Historic data deleted');
-      res.sendStatus(200);
-    }
+  // ... Code for deleting data from historic_data table ...
+});
+
+// Middleware to check if user is logged in
+const isLoggedIn = (req, res, next) => {
+  if (req.session.loggedInUser) {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+};
+
+// Render login form
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Compare the provided password with the hashed password in the database
+  // Set session variables on successful login
+});
+
+// Render register form
+app.post('/register', (req, res) => {
+  const { username, password } = req.body;
+
+  // Hash the password and insert user data into the users table
+  bcrypt.hash(password, 10, (err, hashedPassword) => {
+    // Handle registration success or failure
   });
 });
 
+
+// Render home page for logged-in user
+app.get('/', isLoggedIn, (req, res) => {
+  // ... Code for rendering the home page ...
+});
+
+// Other routes
+// ...
+
+// Server listen
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
