@@ -20,6 +20,7 @@ const qos = 0;
 
 const client = mqtt.connect(brokerUrl);
 
+let loggedInUsername = null;
 let appStatus = 'off';
 
 // Connect to the SQLite database for users
@@ -80,8 +81,9 @@ client.on('message', (topic, message)  => {
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
-     // Retrieve the username from app.locals
-    const username = app.locals.username;
+
+     // Use the global variable loggedInUsername
+    const username = loggedInUsername;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -114,6 +116,7 @@ client.on('message', (topic, message)  => {
     io.emit('statusUpdate', appStatus);
   }
 });
+
 
 // Middleware to check if user is logged in
 
@@ -183,7 +186,7 @@ app.post('/login', (req, res) => {
         } else if (result) {
           // Set session variable to indicate user is logged in
           req.session.loggedInUser = username;
-          app.locals.username = username; // Store username in app.locals
+          loggedInUsername = username; // Store username in the global variable
           res.redirect('/'); // Redirect to the home page after successful login
         } else {
           res.status(401).json({ error: 'Authentication failed' });
@@ -192,6 +195,7 @@ app.post('/login', (req, res) => {
     }
   });
 });
+
 
 // Render login form
 app.get('/login', (req, res) => {
