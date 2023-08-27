@@ -5,6 +5,9 @@ const http = require('http');
 const socketIo = require('socket.io');
 const sqlite3 = require('sqlite3').verbose();
 const moment = require('moment-timezone');
+const bcrypt = require('bcrypt');
+const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,13 +22,27 @@ const client = mqtt.connect(brokerUrl);
 
 let appStatus = 'off';
 
-// Connect to the SQLite database
+// Connect to the SQLite database for users
+const userDb = new sqlite3.Database('user_data.db', (err) => {
+  if (err) {
+    console.error('Error connecting to the user database:', err.message);
+  } else {
+    console.log('Connected to the user SQLite database');
+    userDb.run(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY,
+        username TEXT,
+        password TEXT
+      )
+    `);
+  }
+});
+
 const db = new sqlite3.Database('historic_data.db', (err) => {
   if (err) {
     console.error('Error connecting to the database:', err.message);
   } else {
     console.log('Connected to the SQLite database');
-    // Create the table if it doesn't exist
     db.run(`
       CREATE TABLE IF NOT EXISTS historic_data (
         id INTEGER PRIMARY KEY,
@@ -40,6 +57,16 @@ const db = new sqlite3.Database('historic_data.db', (err) => {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+
+app.use(
+  session({
+    store: new SQLiteStore(),
+    secret: 'mqtt@817',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 1 week
+  })
+);
 
 client.on('connect', () => {
   console.log('Connected to MQTT broker');
@@ -59,7 +86,6 @@ client.on('message', (topic, message) => {
       appStatus = 'off';
     }
 
-    // Insert data into the SQLite database
     db.run(
       'INSERT INTO historic_data (date, time, command, status) VALUES (?, ?, ?, ?)',
       [formattedDate, formattedTime, receivedCommand, appStatus],
@@ -68,8 +94,6 @@ client.on('message', (topic, message) => {
           console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
-          
-          // Emit newEntry event to connected clients
           io.emit('newEntry', {
             date: formattedDate,
             time: formattedTime,
@@ -112,21 +136,17 @@ io.on('connection', (socket) => {
 });
 
 app.get('/historic-data', (req, res) => {
-  // Retrieve data from the database and order by the most recent entries
   db.all('SELECT * FROM historic_data ORDER BY date DESC, time DESC', [], (err, rows) => {
     if (err) {
       console.error('Error retrieving data from the database:', err.message);
       res.status(500).send('Internal Server Error');
     } else {
-      // Pass the darkMode variable as an option
       res.render('historic-data', { rows: rows, darkMode: req.query.darkMode === 'true' });
     }
   });
 });
 
-
 app.post('/delete-data', (req, res) => {
-  // Delete all data from the historic_data table
   db.run('DELETE FROM historic_data', (err) => {
     if (err) {
       console.error('Error deleting data:', err.message);
@@ -137,7 +157,6 @@ app.post('/delete-data', (req, res) => {
     }
   });
 });
-
 
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);

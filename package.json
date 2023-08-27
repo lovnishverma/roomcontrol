@@ -13,6 +13,9 @@
     "socket.io": "^4.2.0",
     "sqlite3": "^5.1.6",
     "moment-timezone": "^0.5.43",
-    "ejs": "^3.1.9"
+    "ejs": "^3.1.9",
+    "bcrypt": "^5.1.1",
+    "express-session": "^1.17.3",
+    "connect-sqlite3": "^0.9.13"
   }
 }
