@@ -79,14 +79,12 @@ const isLoggedIn = (req, res, next) => {
   }
 };
 
-
-client.on('message', (topic, message) => {
+const handleMqttMessage = (username, io, topic, message) => {
   if (topic === mqttTopic) {
     const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
-    const username = req.session.loggedInUser;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -115,10 +113,15 @@ client.on('message', (topic, message) => {
         }
       }
     );
-
     io.emit('statusUpdate', appStatus);
   }
+};
+
+
+client.on('message', (topic, message) => {
+  handleMqttMessage(topic, message);
 });
+
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
