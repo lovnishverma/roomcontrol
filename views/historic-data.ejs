@@ -3,45 +3,55 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <style>
+   <style>
     /* Add your custom styles here */
-    
-  body.dark-mode {
-    background-color: #1a1a1a;
-    color: #ffffff;
-  }
+    body.dark-mode {
+      background-color: #1a1a1a;
+      color: #ffffff;
+    }
 
-  .table.dark-mode {
-    background-color: #2d2d2d;
-    color: #ffffff;
-  }
+    .table.dark-mode {
+      background-color: #2d2d2d;
+      color: #ffffff;
+    }
 
-  .table.dark-mode th,
-  .table.dark-mode td {
-    border-color: #555555;
-  }
+    .table.dark-mode th,
+    .table.dark-mode td {
+      border-color: #555555;
+      color: #ffffff; /* Set text color to white in dark mode */
+    }
 
-  .btn.dark-mode {
-    background-color: #333333;
-    border-color: #333333;
-    color: #ffffff;
-  }
+    /* Additional rule to set text color for other elements */
+    .table.dark-mode th,
+    .table.dark-mode td {
+      color: #ffffff; /* Set text color to white in dark mode */
+    }
 
+    .btn.dark-mode {
+      background-color: #333333;
+      border-color: #333333;
+      color: #333333;
+    }
   </style>
-  <!-- ... (other head content) ... -->
 </head>
 <body class="<%= darkMode ? 'dark-mode' : '' %>">
   <div class="container">
+    <div class="d-flex justify-content-end my-3">
+      <label class="switch mr-2">
+        <input type="checkbox" id="darkModeToggle">
+        <span class="slider round"></span>
+      </label>
+      <button class="btn btn-danger" id="deleteDataButton">Delete Data</button>
+    </div>
     <h6 class="text-center mt-4"> Real-Time Historical Data</h6>
     <div class="table-responsive">
-      <table class="table table-striped mt-2">
+      <table class="table table-striped mt-2 table-dark-mode">
         <thead>
           <tr>
             <th>Date</th>
             <th>Time</th>
             <th>Command</th>
             <th>Status</th>
-            <button class="btn btn-danger dark-mode" id="deleteDataButton">Delete Data</button>
           </tr>
         </thead>
         <tbody>
@@ -60,6 +70,32 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
   <script src="Historical_Data_Script.js"></script>
+  
+  <script>
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const deleteDataButton = document.getElementById('deleteDataButton');
 
+    darkModeToggle.addEventListener('change', () => {
+      document.body.classList.toggle('dark-mode', darkModeToggle.checked);
+    });
+
+    deleteDataButton.addEventListener('click', async () => {
+      const confirmDelete = confirm('Are you sure you want to delete all historic data? This action cannot be undone.');
+      if (confirmDelete) {
+        try {
+          const response = await fetch('/delete-data', { method: 'POST' });
+          if (response.ok) {
+            alert('Historic data deleted successfully.');
+            location.reload();
+          } else {
+            alert('An error occurred while deleting data.');
+          }
+        } catch (error) {
+          console.error('Error deleting data:', error);
+          alert('An error occurred while deleting data.');
+        }
+      }
+    });
+  </script>
 </body>
 </html>

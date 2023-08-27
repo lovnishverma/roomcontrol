@@ -118,10 +118,12 @@ app.get('/historic-data', (req, res) => {
       console.error('Error retrieving data from the database:', err.message);
       res.status(500).send('Internal Server Error');
     } else {
-      res.render('historic-data', { rows: rows });
+      // Pass the darkMode variable as an option
+      res.render('historic-data', { rows: rows, darkMode: req.query.darkMode === 'true' });
     }
   });
 });
+
 
 app.post('/delete-data', (req, res) => {
   // Delete all data from the historic_data table
