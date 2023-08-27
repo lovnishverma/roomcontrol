@@ -24,8 +24,15 @@ $(document).ready(function () {
   // Connect to the WebSocket server
   const socket = io();
 
-  // Get a reference to the audio element
-  const clickSound = document.getElementById('clickSound');
+  // Preload the click sound
+const clickSound = new Audio('https://cdn.glitch.global/08e63b66-17e6-4a37-b447-cb3acf6954ba/click.mp3?v=1693077805076');
+clickSound.load();
+
+// Play the sound when the switch status changes
+clickSound.play().catch(error => {
+  console.error('Audio playback failed:', error);
+});
+
 
   // Listen for status updates
   socket.on('statusUpdate', function (status) {
