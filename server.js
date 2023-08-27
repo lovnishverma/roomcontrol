@@ -80,30 +80,13 @@ const isLoggedIn = (req, res, next) => {
 };
 
 
-// Store the username in a variable before the callback
-let currentUsername = '';
-
-// ...
-
-// When a user logs in, set the current username
-app.post('/login', (req, res) => {
-  // ...
-  req.session.loggedInUser = username;
-  currentUsername = username; // Store the username in the variable
-  // ...
-});
-
-// ...
-
-// In the MQTT client message callback
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
     const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
-    
-    const username = currentUsername; // Use the stored username here
+    const username = req.session.loggedInUser;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -136,8 +119,6 @@ client.on('message', (topic, message) => {
     io.emit('statusUpdate', appStatus);
   }
 });
-
-
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
