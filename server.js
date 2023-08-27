@@ -75,15 +75,16 @@ client.on('connect', () => {
   client.subscribe(mqttTopic, { qos });
 });
 
-client.on('message', (topic, message)  => {
+client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
     const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-     // Use the global variable loggedInUsername
-    const username = loggedInUsername;
+    // Retrieve the username associated with the socket that sent the message
+    const socketId = clientSocketMap[topic];
+    const username = socketUserMap[socketId] || loggedInUsername;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -107,7 +108,7 @@ client.on('message', (topic, message)  => {
             time: formattedTime,
             command: receivedCommand,
             status: appStatus,
-            username: username
+            username: username,
           });
         }
       }
@@ -116,6 +117,7 @@ client.on('message', (topic, message)  => {
     io.emit('statusUpdate', appStatus);
   }
 });
+
 
 
 // Middleware to check if user is logged in
@@ -148,12 +150,28 @@ app.get('/app-status', (req, res) => {
 const server = http.createServer(app);
 const io = socketIo(server);
 
+const socketUserMap = {}; // Initialize a map to store socket IDs and usernames
+
 io.on('connection', (socket) => {
   console.log('A client connected');
+
+  socket.on('toggleSwitch', (data) => {
+    const { isChecked, username } = data;
+
+    // Store the username associated with the socket ID
+    socketUserMap[socket.id] = username;
+
+    // Emit the toggleSwitch event to other connected clients
+    socket.broadcast.emit('toggleSwitch', { isChecked, username });
+  });
+
   socket.on('disconnect', () => {
     console.log('A client disconnected');
+    // Remove the socket ID and username mapping when a client disconnects
+    delete socketUserMap[socket.id];
   });
 });
+
 
 app.get('/historic-data', isLoggedIn, (req, res) => {
   // Retrieve data from the database and order by the most recent entries
