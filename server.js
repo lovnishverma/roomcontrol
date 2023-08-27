@@ -74,16 +74,60 @@ client.on('connect', () => {
 });
 
 client.on('message', (topic, message) => {
-  // ... Code for handling MQTT messages ...
+  if (topic === mqttTopic) {
+    const receivedCommand = message.toString();
+    const currentDate = moment().tz('Asia/Kolkata');
+    const formattedDate = currentDate.format('YYYY-MM-DD');
+    const formattedTime = currentDate.format('hh:mm:ss A');
+
+    if (receivedCommand === '1') {
+      appStatus = 'on';
+    } else {
+      appStatus = 'off';
+    }
+
+    // Insert data into the SQLite database
+    db.run(
+      'INSERT INTO historic_data (date, time, command, status) VALUES (?, ?, ?, ?)',
+      [formattedDate, formattedTime, receivedCommand, appStatus],
+      (err) => {
+        if (err) {
+          console.error('Error inserting data into database:', err.message);
+        } else {
+          console.log('Data has been inserted into the database');
+          
+          // Emit newEntry event to connected clients
+          io.emit('newEntry', {
+            date: formattedDate,
+            time: formattedTime,
+            command: receivedCommand,
+            status: appStatus
+          });
+        }
+      }
+    );
+
+    io.emit('statusUpdate', appStatus);
+  }
 });
 
 app.post('/send-command', (req, res) => {
-  // ... Code for sending MQTT commands ...
+  const command = req.body.command;
+  client.publish(mqttTopic, command.toString(), { qos });
+
+  if (command === '1') {
+    appStatus = 'on';
+  } else {
+    appStatus = 'off';
+  }
+
+  res.send(`Command sent: ${command}`);
 });
 
 app.get('/app-status', (req, res) => {
-  // ... Code for retrieving app status ...
+  res.json({ status: appStatus });
 });
+
 
 const server = http.createServer(app);
 const io = socketIo(server);
@@ -97,7 +141,16 @@ io.on('connection', (socket) => {
 
 
 app.get('/historic-data', (req, res) => {
-  // ... Code for retrieving and rendering historic data ...
+  // Retrieve data from the database and order by the most recent entries
+  db.all('SELECT * FROM historic_data ORDER BY date DESC, time DESC', [], (err, rows) => {
+    if (err) {
+      console.error('Error retrieving data from the database:', err.message);
+      res.status(500).send('Internal Server Error');
+    } else {
+      // Pass the darkMode variable as an option
+      res.render('historic-data', { rows: rows, darkMode: req.query.darkMode === 'true' });
+    }
+  });
 });
 
 // Login route
@@ -164,15 +217,25 @@ app.get('/register', (req, res) => {
 
 // Delete data route
 app.post('/delete-data', (req, res) => {
-  // ... Code for deleting data from historic_data table ...
+  // Delete all data from the historic_data table
+  db.run('DELETE FROM historic_data', (err) => {
+    if (err) {
+      console.error('Error deleting data:', err.message);
+      res.status(500).json({ error: 'An error occurred while deleting data.' });
+    } else {
+      console.log('Historic data deleted');
+      res.sendStatus(200);
+    }
+  });
 });
 
 // Middleware to check if user is logged in
+
 const isLoggedIn = (req, res, next) => {
   if (req.session.loggedInUser) {
-    res.redirect('/home'); // Redirect to the home page if user is logged in
-  } else {
     next();
+  } else {
+    res.redirect('/login');
   }
 };
 
