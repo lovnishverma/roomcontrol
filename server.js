@@ -74,54 +74,15 @@ client.on('connect', () => {
   client.subscribe(mqttTopic, { qos });
 });
 
-// ...
+client.on('message', (topic, message)  => {
+  if (topic === mqttTopic) {
+    const receivedCommand = message.toString();
+    const currentDate = moment().tz('Asia/Kolkata');
+    const formattedDate = currentDate.format('YYYY-MM-DD');
+    const formattedTime = currentDate.format('hh:mm:ss A');
+    const username = app.get('username'); // Get the username from the app.locals
 
-// ...
-
-// ...
-
-const server = http.createServer(app);
-const io = socketIo(server);
-
-// Create a map to store the mapping between MQTT topics and usernames
-const clientSocketMap = {};
-
-io.on('connection', (socket) => {
-  console.log('A client connected');
-
-  // Store the username in the socket object upon connection
-  socket.on('loggedInUser', (username) => {
-    socket.loggedInUser = username;
-  });
-
-  socket.on('mqttTopic', (topic) => {
-    // Store the MQTT topic and associated username
-    clientSocketMap[topic] = socket.loggedInUser;
-  });
-
-  socket.on('disconnect', () => {
-    console.log('A client disconnected');
-
-    // Remove the socket information from the map when a client disconnects
-    for (const topic in clientSocketMap) {
-      if (clientSocketMap[topic] === socket.loggedInUser) {
-        delete clientSocketMap[topic];
-      }
-    }
-  });
-
-  socket.on('sendCommand', (command) => {
-    // Retrieve the MQTT topic associated with the command
-    const topic = mqttTopic;
-
-    // Retrieve the username of the logged-in user from the socket
-    const username = socket.loggedInUser;
-
-    // Publish the command to the MQTT topic
-    client.publish(topic, command.toString(), { qos });
-
-    // Update the app status based on the command
-    if (command === '1') {
+    if (receivedCommand === '1') {
       appStatus = 'on';
     } else {
       appStatus = 'off';
@@ -130,7 +91,7 @@ io.on('connection', (socket) => {
     // Insert data into the SQLite database
     db.run(
       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-      [formattedDate, formattedTime, command, appStatus, username],
+      [formattedDate, formattedTime, receivedCommand, appStatus, username],
       (err) => {
         if (err) {
           console.error('Error inserting data into database:', err.message);
@@ -141,7 +102,7 @@ io.on('connection', (socket) => {
           io.emit('newEntry', {
             date: formattedDate,
             time: formattedTime,
-            command: command,
+            command: receivedCommand,
             status: appStatus,
             username: username
           });
@@ -150,11 +111,8 @@ io.on('connection', (socket) => {
     );
 
     io.emit('statusUpdate', appStatus);
-  });
+  }
 });
-
-
-// ...
 
 // Middleware to check if user is logged in
 
@@ -181,6 +139,16 @@ app.post('/send-command', (req, res) => {
 
 app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
+});
+
+const server = http.createServer(app);
+const io = socketIo(server);
+
+io.on('connection', (socket) => {
+  console.log('A client connected');
+  socket.on('disconnect', () => {
+    console.log('A client disconnected');
+  });
 });
 
 app.get('/historic-data', isLoggedIn, (req, res) => {
@@ -214,6 +182,7 @@ app.post('/login', (req, res) => {
         } else if (result) {
           // Set session variable to indicate user is logged in
           req.session.loggedInUser = username;
+          app.locals.username = username; // Store username in app.locals
           res.redirect('/'); // Redirect to the home page after successful login
         } else {
           res.status(401).json({ error: 'Authentication failed' });
@@ -257,6 +226,7 @@ app.post('/register', (req, res) => {
     }
   });
 });
+
 
 // Render register form
 app.get('/register', (req, res) => {
