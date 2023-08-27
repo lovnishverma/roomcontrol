@@ -51,7 +51,7 @@ client.on('message', (topic, message) => {
     const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
-    const formattedTime = currentDate.format('HH:mm:ss');
+    const formattedTime = currentDate.format('hh:mm:ss A');
 
     if (receivedCommand === '1') {
       appStatus = 'on';
