@@ -69,6 +69,107 @@ app.use(
   })
 );
 
+client.on('connect', () => {
+  console.log('Connected to MQTT broker');
+  client.subscribe(mqttTopic, { qos });
+});
+
+client.on('message', (topic, message) => {
+  if (topic === mqttTopic) {
+    const receivedCommand = message.toString();
+    const currentDate = moment().tz('Asia/Kolkata');
+    const formattedDate = currentDate.format('YYYY-MM-DD');
+    const formattedTime = currentDate.format('hh:mm:ss A');
+
+    const username = io.loggedInUser; // Access the stored username from io object
+
+    if (receivedCommand === '1') {
+      appStatus = 'on';
+    } else {
+      appStatus = 'off';
+    }
+
+    // Insert data into the SQLite database
+    db.run(
+      'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
+      [formattedDate, formattedTime, receivedCommand, appStatus, username],
+      (err) => {
+        if (err) {
+          console.error('Error inserting data into database:', err.message);
+        } else {
+          console.log('Data has been inserted into the database');
+
+          // Emit newEntry event to connected clients
+          io.emit('newEntry', {
+            date: formattedDate,
+            time: formattedTime,
+            command: receivedCommand,
+            status: appStatus,
+            username: username
+          });
+        }
+      }
+    );
+
+    io.emit('statusUpdate', appStatus);
+  }
+});
+
+// Middleware to check if user is logged in
+
+const isLoggedIn = (req, res, next) => {
+  if (req.session.loggedInUser) {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+};
+
+app.post('/send-command', (req, res) => {
+  const command = req.body.command;
+  client.publish(mqttTopic, command.toString(), { qos });
+
+  if (command === '1') {
+    appStatus = 'on';
+  } else {
+    appStatus = 'off';
+  }
+
+  res.send(`Command sent: ${command}`);
+});
+
+app.get('/app-status', (req, res) => {
+  res.json({ status: appStatus });
+});
+
+const server = http.createServer(app);
+const io = socketIo(server);
+
+io.on('connection', (socket) => {
+  console.log('A client connected');
+
+  // Store the username in the socket object upon connection
+  socket.on('loggedInUser', (username) => {
+    socket.loggedInUser = username;
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A client disconnected');
+  });
+});
+
+app.get('/historic-data', isLoggedIn, (req, res) => {
+  // Retrieve data from the database and order by the most recent entries
+  db.all('SELECT * FROM historic_data ORDER BY date DESC, time DESC', [], (err, rows) => {
+    if (err) {
+      console.error('Error retrieving data from the database:', err.message);
+      res.status(500).send('Internal Server Error');
+    } else {
+      // Pass the darkMode variable as an option
+      res.render('historic-data', { rows: rows, darkMode: req.query.darkMode === 'true' });
+    }
+  });
+});
 
 // Login route
 app.post('/login', (req, res) => {
@@ -88,8 +189,7 @@ app.post('/login', (req, res) => {
         } else if (result) {
           // Set session variable to indicate user is logged in
           req.session.loggedInUser = username;
-          app.locals.username = username; // Store username in app.locals
-          res.redirect('/'); // Redirect to the home page after successful login
+          res.render('home'); // Redirect to the home page after successful login
         } else {
           res.status(401).json({ error: 'Authentication failed' });
         }
