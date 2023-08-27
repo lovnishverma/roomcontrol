@@ -97,26 +97,5 @@
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
   <script src="Historical_Data_Script.js"></script>
-  <script>
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const deleteDataButton = document.getElementById('deleteDataButton');
-
-    darkModeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      document.body.classList.toggle('light-mode');
-    });
-
-    deleteDataButton.addEventListener('click', async () => {
-      const confirmDelete = confirm('Are you sure you want to delete all historic data? This action cannot be undone.');
-      if (confirmDelete) {
-        try {
-          // Add your delete data logic here
-        } catch (error) {
-          console.error('Error deleting data:', error);
-          alert('An error occurred while deleting data.');
-        }
-      }
-    });
-  </script>
 </body>
 </html>
