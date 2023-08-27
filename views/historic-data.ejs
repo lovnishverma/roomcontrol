@@ -3,45 +3,35 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-   <style>
+  <style>
     /* Add your custom styles here */
     body.dark-mode {
       background-color: #1a1a1a;
-      color: #ffffff;
+      color: white;
     }
 
     .table.dark-mode {
-      background-color: #2d2d2d;
-      color: #ffffff;
+      background-color: white;
     }
 
     .table.dark-mode th,
     .table.dark-mode td {
-      border-color: #555555;
-      color: #ffffff; /* Set text color to white in dark mode */
-    }
-
-    /* Additional rule to set text color for other elements */
-    .table.dark-mode th,
-    .table.dark-mode td {
-      color: #ffffff; /* Set text color to white in dark mode */
+      border-color: white;
+      color: white; /* Set text color to white in dark mode */
     }
 
     .btn.dark-mode {
       background-color: #333333;
       border-color: #333333;
-      color: #333333;
+      color: #ffffff;
     }
   </style>
 </head>
 <body class="<%= darkMode ? 'dark-mode' : '' %>">
   <div class="container">
     <div class="d-flex justify-content-end my-3">
-      <label class="switch mr-2">
-        <input type="checkbox" id="darkModeToggle">
-        <span class="slider round"></span>
-      </label>
-      <button class="btn btn-danger" id="deleteDataButton">Delete Data</button>
+      <button class="btn btn-secondary" id="darkModeToggle">Dark Mode</button>
+      <button class="btn btn-danger ml-2" id="deleteDataButton">Delete Data</button>
     </div>
     <h6 class="text-center mt-4"> Real-Time Historical Data</h6>
     <div class="table-responsive">
@@ -75,8 +65,8 @@
     const darkModeToggle = document.getElementById('darkModeToggle');
     const deleteDataButton = document.getElementById('deleteDataButton');
 
-    darkModeToggle.addEventListener('change', () => {
-      document.body.classList.toggle('dark-mode', darkModeToggle.checked);
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
     });
 
     deleteDataButton.addEventListener('click', async () => {
