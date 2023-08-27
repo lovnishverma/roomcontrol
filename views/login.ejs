@@ -4,17 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-form {
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
 <body>
-  <h1>Login</h1>
-  <form action="/login" method="POST">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
-    <br>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-    <br>
-    <button type="submit">Login</button> <a href="/register">Register Now</a>
-  </form>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="login-form">
+          <h1 class="text-center">Login</h1>
+          <form action="/login" method="POST">
+            <div class="form-group">
+              <label for="username">Username:</label>
+              <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary">Login</button>
+              <a href="/register" class="btn btn-link">Register Now</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
