@@ -4,50 +4,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
-    /* Add your custom styles here */
-    body.dark-mode {
-      background-color: #1a1a1a;
-      color: white;
-    }
+  /* Add your custom styles here */
+  body.light-mode {
+    background-color: white;
+    color: black;
+  }
 
-    .table.dark-mode {
-      background-color: white;
-    }
+  body.dark-mode {
+    background-color: #1a1a1a;
+    color: white;
+  }
 
-    .table.dark-mode th,
-    .table.dark-mode td {
-      border-color: white;
-      color: white; /* Set text color to white in dark mode */
-    }
+  table.table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+    color: black;
+  }
 
-    .btn.dark-mode {
-      background-color: #333333;
-      border-color: #333333;
-      color: #ffffff;
-    }
-  </style>
+  table.table th,
+  table.table td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    color: inherit;
+  }
+
+  table.table.dark-mode {
+    background-color: #2d2d2d;
+    color: white;
+  }
+
+  table.table.dark-mode th,
+  table.table.dark-mode td {
+    border-color: #555555;
+  }
+
+  .btn.dark-mode {
+    background-color: #333333;
+    border-color: #333333;
+    color: white;
+  }
+</style>
+
 </head>
-<body class="<%= darkMode ? 'dark-mode' : '' %>">
+<body class="<%= darkMode ? 'dark-mode' : 'light-mode' %>">
   <div class="container">
     <div class="d-flex justify-content-end my-3">
-      <button class="btn btn-secondary" id="darkModeToggle">Dark Mode</button>
+      <button class="btn btn-secondary" id="darkModeToggle">Toggle Mode</button>
       <button class="btn btn-danger ml-2" id="deleteDataButton">Delete Data</button>
     </div>
-    <h6 class="text-center mt-4"> Real-Time Historical Data</h6>
+    <h6 class="text-center mt-4 <%= darkMode ? 'text-white' : '' %>"> Real-Time Historical Data</h6>
     <div class="table-responsive">
-      <table class="table table-striped mt-2 table-dark-mode">
-        <thead>
-          <tr>
-            <th>Date</th>
+      <table class="table table-striped mt-2 <%= darkMode ? 'dark-mode' : '' %>">
+        <thead class="text-center mt-4 <%= darkMode ? 'text-white' : '' %>">
+          <tr class="text-center mt-4 <%= darkMode ? 'text-white' : '' %>">
+            <th class="text-center mt-4 <%= darkMode ? 'text-white' : '' %>">Date</th>
             <th>Time</th>
             <th>Command</th>
             <th>Status</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="text-center mt-4 <%= darkMode ? 'text-white' : '' %>">
           <% rows.forEach(function(row) { %>
-            <tr>
-              <td><%= row.date %></td>
+            <tr class="text-center mt-4 <%= darkMode ? 'text-white' : '' %>">
+              <td class="text-center mt-4 <%= darkMode ? 'text-white' : '' %>"><%= row.date %></td>
               <td><%= row.time %></td>
               <td><%= row.command %></td>
               <td><%= row.status %></td>
@@ -67,6 +87,7 @@
 
     darkModeToggle.addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
+      document.body.classList.toggle('light-mode');
     });
 
     deleteDataButton.addEventListener('click', async () => {
