@@ -77,39 +77,16 @@ client.on('connect', () => {
   client.subscribe(mqttTopic, { qos });
 });
 
-// ... (other code remains the same)
-
-const server = http.createServer(app);
-const io = socketIo(server);
-
-const socketUserMap = {}; // Initialize a map to store socket IDs and usernames
-
-io.on('connection', (socket) => {
-  console.log('A client connected');
-
-  socket.on('toggleSwitch', (data) => {
-    const { isChecked, username } = data;
-
-    // Store the username associated with the socket ID
-    socketUserMap[socket.id] = username;
-
-    // Emit the toggleSwitch event to other connected clients
-    socket.broadcast.emit('toggleSwitch', { isChecked, username });
-  });
-
-  socket.on('disconnect', () => {
-    console.log('A client disconnected');
-    // Remove the socket ID and username mapping when a client disconnects
-    delete socketUserMap[socket.id];
-  });
-
-  socket.on('message', (message) => {
+client.on('message', (topic, message) => {
+  if (topic === mqttTopic) {
+    const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    const username = socketUserMap[socket.id] || loggedInUsername;
-    const receivedCommand = message.toString();
+    // Retrieve the username associated with the socket that sent the message
+    const socketId = clientSocketMap[topic];
+    const username = socketUserMap[socketId] || loggedInUsername;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -140,9 +117,8 @@ io.on('connection', (socket) => {
     );
 
     io.emit('statusUpdate', appStatus);
-  });
+  }
 });
-
 
 
 
@@ -171,6 +147,31 @@ app.post('/send-command', (req, res) => {
 
 app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
+});
+
+const server = http.createServer(app);
+const io = socketIo(server);
+
+const socketUserMap = {}; // Initialize a map to store socket IDs and usernames
+
+io.on('connection', (socket) => {
+  console.log('A client connected');
+
+  socket.on('toggleSwitch', (data) => {
+    const { isChecked, username } = data;
+
+    // Store the username associated with the socket ID
+    socketUserMap[socket.id] = username;
+
+    // Emit the toggleSwitch event to other connected clients
+    socket.broadcast.emit('toggleSwitch', { isChecked, username });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A client disconnected');
+    // Remove the socket ID and username mapping when a client disconnects
+    delete socketUserMap[socket.id];
+  });
 });
 
 
