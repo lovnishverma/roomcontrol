@@ -23,9 +23,6 @@ const client = mqtt.connect(brokerUrl);
 let loggedInUsername = null;
 let appStatus = 'off';
 
-
-
-
 // Connect to the SQLite database for users
 const userDb = new sqlite3.Database('user_data.db', (err) => {
   if (err) {
@@ -78,16 +75,15 @@ client.on('connect', () => {
   client.subscribe(mqttTopic, { qos });
 });
 
-client.on('message', (topic, message) => {
+client.on('message', (topic, message)  => {
   if (topic === mqttTopic) {
     const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-  // Retrieve the username from the socket using clientSocketMap
-    const socket = io.sockets.connected[clientSocketMap[topic]];
-    const username = socket ? socket.loggedInUser : null;
+     // Use the global variable loggedInUsername
+    const username = loggedInUsername;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -152,34 +148,11 @@ app.get('/app-status', (req, res) => {
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Inside the io.on('connection', ...) block
 io.on('connection', (socket) => {
   console.log('A client connected');
-
-  socket.on('loggedInUser', (username) => {
-    socket.loggedInUser = username;
-  });
-
-  // Create a map to store the mapping between MQTT topics and connected sockets
-  const socketTopicMap = {};
-
-  socket.on('mqttTopic', (topic) => {
-    // Store the socket associated with the MQTT topic
-    socketTopicMap[topic] = socket;
-  });
-
   socket.on('disconnect', () => {
     console.log('A client disconnected');
-
-    // Remove the socket information from the map when a client disconnects
-    for (const topic in socketTopicMap) {
-      if (socketTopicMap[topic] === socket) {
-        delete socketTopicMap[topic];
-      }
-    }
   });
-
-  // ... Other socket event listeners ...
 });
 
 app.get('/historic-data', isLoggedIn, (req, res) => {
