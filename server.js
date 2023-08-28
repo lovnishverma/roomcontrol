@@ -82,8 +82,8 @@ client.on('message', (topic, message)  => {
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-       // Retrieve the username associated with the socket that sent the message
-    const socketId = clientSocketMap[topic];
+     // Retrieve the username associated with the current socket that sent the message
+    const socketId = clientSocketMap[topic]; // Use the topic as the key
     const username = socketUserMap[socketId] || loggedInUsername;
 
     if (receivedCommand === '1') {
