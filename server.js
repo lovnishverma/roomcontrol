@@ -303,4 +303,4 @@ app.post('/logout', (req, res) => {
 // Server listen
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-});
+}); 
