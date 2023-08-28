@@ -17,17 +17,18 @@
     <div class="container">
       <main>
         <h6 class="text-center">MQTT Led's Control</h6>
-        <a href="/historic-data">View History</a>
         <h6>Welcome, <%= username %>!</h6>
-        <h6 class="text-center">
-          <div id="appStatus">Switch Status: off</div>
-        </h6>
-        <label class="d-flex align-items-center justify-content-center">
+          <label class="d-flex align-items-center justify-content-center">
           <input id="toggleSwitch" class="l" type="checkbox">
           <span class="slider"></span>
         </label>
+        <h6 class="text-center">
+          <div id="appStatus">Switch Status: off</div>
+        </h6>
+          <h6> <a href="/historic-data">View History</a>
+        </h6>
           <form action="/logout" method="post">
-  <button type="submit">Logout</button>
+  <button class="btn" type="submit">Logout</button>
 </form>
       </main>
     </div>

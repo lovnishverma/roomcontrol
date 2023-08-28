@@ -8,8 +8,8 @@
 	font-size: calc(45px + (80 - 64) * (100vw - 320px)/(960 - 320));
 }
 
-h3 {
-	font-size: 0.3em;
+h6 {
+	font-size: 0.5em;
   line-height: 1.5; }
   input {
 	font-size: 1em;
