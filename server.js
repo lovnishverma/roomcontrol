@@ -34,7 +34,7 @@ const userDb = new sqlite3.Database('user_data.db', (err) => {
     userDb.run(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,
-        username TEXT,
+        username TEXT UNIQUE,
         password TEXT
       )
     `);
