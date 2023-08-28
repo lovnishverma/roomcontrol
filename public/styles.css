@@ -8,6 +8,24 @@
 	font-size: calc(45px + (80 - 64) * (100vw - 320px)/(960 - 320));
 }
 
+/* Custom CSS */
+.btn-custom {
+  background-color: red;
+  color: yellow;
+  border-color: red;
+  padding: 0.1rem 0.2rem;
+  font-size: 0.300rem; /* Adjust font size as needed */
+}
+/* Custom CSS */
+.btn-history {
+  background-color: green;
+  color: yellow;
+  border-color: green;
+  padding: 0.20rem 0.3rem;
+  font-size: 0.400rem; /* Adjust font size as needed */
+}
+
+
 h6 {
 	font-size: 0.5em;
   line-height: 1.5; }
