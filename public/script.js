@@ -1,7 +1,4 @@
 $(document).ready(function () {
-  // Connect to the WebSocket server
-  const socket = io();
-
   // Create an audio element
   const clickSound = new Audio('https://cdn.glitch.global/08e63b66-17e6-4a37-b447-cb3acf6954ba/click.mp3?v=1693077805076');
 
@@ -12,7 +9,11 @@ $(document).ready(function () {
   clickSound.play().catch(error => {
     console.error('Audio playback failed:', error);
   });
+});
 
+
+
+$(document).ready(function () {
   // Initial update
   $.get('/app-status', function (data) {
     updateAppStatus(data.status);
@@ -38,17 +39,21 @@ $(document).ready(function () {
     });
   });
 
-  // Listen for status updates
-  socket.on('statusUpdate', function (status) {
-    updateAppStatus(status); // Call the function to update status and toggle switch
-  });
+  // Connect to the WebSocket server
+  const socket = io();
 
   // Function to play the click sound
   function playClickSound() {
+    const clickSound = document.getElementById('clickSound');
     clickSound.play().catch(error => {
       console.error('Audio playback failed:', error);
     });
   }
+
+  // Listen for status updates
+  socket.on('statusUpdate', function (status) {
+    updateAppStatus(status); // Call the function to update status and toggle switch
+  });
 
   // Function to update app status and toggle switch
   function updateAppStatus(appStatus) {

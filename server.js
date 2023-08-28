@@ -20,6 +20,8 @@ const qos = 0;
 
 const client = mqtt.connect(brokerUrl);
 
+const clientSocketMap = {};
+
 let loggedInUsername = null;
 let appStatus = 'off';
 
@@ -75,15 +77,15 @@ client.on('connect', () => {
   client.subscribe(mqttTopic, { qos });
 });
 
-client.on('message', (topic, message)  => {
+client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
     const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-     // Retrieve the username associated with the current socket that sent the message
-    const socketId = clientSocketMap[topic]; // Use the topic as the key
+    // Retrieve the username associated with the socket that sent the message
+    const socketId = clientSocketMap[topic];
     const username = socketUserMap[socketId] || loggedInUsername;
 
     if (receivedCommand === '1') {
@@ -108,7 +110,7 @@ client.on('message', (topic, message)  => {
             time: formattedTime,
             command: receivedCommand,
             status: appStatus,
-            username: username
+            username: username,
           });
         }
       }
@@ -117,6 +119,7 @@ client.on('message', (topic, message)  => {
     io.emit('statusUpdate', appStatus);
   }
 });
+
 
 
 // Middleware to check if user is logged in
