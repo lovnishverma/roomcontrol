@@ -3,7 +3,6 @@ const socket = io();
 
 // Get a reference to the audio element
 const clickSound = document.getElementById('clickSound');
-clickSound.load();
 
 // Listen for status updates
 socket.on('statusUpdate', function (status) {
@@ -23,7 +22,6 @@ function updateAppStatus(appStatus) {
   }
 
   // Play the sound when the switch status changes
-  clickSound.load();
   clickSound.play();
 }
 
