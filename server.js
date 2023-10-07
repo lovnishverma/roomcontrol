@@ -22,6 +22,8 @@ const client = mqtt.connect(brokerUrl);
 
 const clientSocketMap = {};
 
+const topicUserMap = {};
+
 let loggedInUsername = null;
 let appStatus = 'off';
 
@@ -65,7 +67,7 @@ app.use(express.static('public'));
 app.use(
   session({
     store: new SQLiteStore(),
-    secret: 'mqtt@1867817',
+    secret: 'mqttjoa@1867817',
     resave: false,
     saveUninitialized: true,
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 1 week
@@ -91,6 +93,8 @@ client.on('message', (topic, message) => {
 
     // Retrieve the username associated with the MQTT topic
     const username = topicUserMap[topic] || 'Unknown User';
+
+    console.log(`Received MQTT message - Topic: ${topic}, Message: ${receivedCommand}, Username: ${username}`);
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -123,6 +127,7 @@ client.on('message', (topic, message) => {
     io.emit('statusUpdate', appStatus);
   }
 });
+
 
 
 // Middleware to check if user is logged in
@@ -207,8 +212,13 @@ app.post('/login', (req, res) => {
           console.error('Error comparing passwords:', bcryptErr.message);
           res.status(500).json({ error: 'Internal Server Error' });
         } else if (result) {
-          // Store the username in the clientSocketMap
-          clientSocketMap[req.sessionID] = username;
+          
+          
+          // Use a unique MQTT topic for each user, e.g., based on their username
+            const userMqttTopic = `mytopic/nielit/${username}`;
+  
+            // Store the username in the topicUserMap
+            topicUserMap[userMqttTopic] = username;
 
           // Set session variable to indicate user is logged in
           req.session.loggedInUser = username;
