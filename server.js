@@ -84,9 +84,8 @@ client.on('message', (topic, message) => {
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    // Retrieve the username associated with the socket that sent the message
-    const socketId = clientSocketMap[topic];
-    const username = socketUserMap[socketId] || loggedInUsername;
+    // Retrieve the username from the session of the request
+    const username = clientSocketMap[topic] || 'Unknown User';
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -119,6 +118,7 @@ client.on('message', (topic, message) => {
     io.emit('statusUpdate', appStatus);
   }
 });
+
 
 
 
@@ -205,8 +205,7 @@ app.post('/login', (req, res) => {
           res.status(500).json({ error: 'Internal Server Error' });
         } else if (result) {
           // Set session variable to indicate user is logged in
-          req.session.loggedInUser = username;
-          loggedInUsername = username; // Store username in the global variable
+          req.session.loggedInUser = username; // Set the session variable here
           res.redirect('/'); // Redirect to the home page after successful login
         } else {
           res.status(401).json({ error: 'Authentication failed' });
