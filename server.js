@@ -22,8 +22,6 @@ const client = mqtt.connect(brokerUrl);
 
 const clientSocketMap = {};
 
-const topicUserMap = {};
-
 let loggedInUsername = null;
 let appStatus = 'off';
 
@@ -67,22 +65,17 @@ app.use(express.static('public'));
 app.use(
   session({
     store: new SQLiteStore(),
-    secret: 'mqttjoa@1867817',
+    secret: 'mqttjoait@817',
     resave: false,
     saveUninitialized: true,
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 1 week
   })
 );
 
-
 client.on('connect', () => {
   console.log('Connected to MQTT broker');
   client.subscribe(mqttTopic, { qos });
-
-  // Populate topicUserMap with the username
-  topicUserMap[mqttTopic] = loggedInUsername;
 });
-
 
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
@@ -91,10 +84,9 @@ client.on('message', (topic, message) => {
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    // Retrieve the username associated with the MQTT topic
-    const username = topicUserMap[topic] || 'Unknown User';
-
-    console.log(`Received MQTT message - Topic: ${topic}, Message: ${receivedCommand}, Username: ${username}`);
+    // Retrieve the username associated with the socket that sent the message
+    const socketId = clientSocketMap[topic];
+    const username = socketUserMap[socketId] || loggedInUsername;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -108,7 +100,7 @@ client.on('message', (topic, message) => {
       [formattedDate, formattedTime, receivedCommand, appStatus, username],
       (err) => {
         if (err) {
-          console.error('Error inserting data into the database:', err.message);
+          console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
 
@@ -127,8 +119,6 @@ client.on('message', (topic, message) => {
     io.emit('statusUpdate', appStatus);
   }
 });
-
-
 
 // Middleware to check if user is logged in
 
@@ -182,7 +172,6 @@ io.on('connection', (socket) => {
   });
 });
 
-
 app.get('/historic-data', isLoggedIn, (req, res) => {
   // Retrieve data from the database and order by the most recent entries
   db.all('SELECT * FROM historic_data ORDER BY date DESC, time DESC', [], (err, rows) => {
@@ -212,16 +201,9 @@ app.post('/login', (req, res) => {
           console.error('Error comparing passwords:', bcryptErr.message);
           res.status(500).json({ error: 'Internal Server Error' });
         } else if (result) {
-          
-          
-          // Use a unique MQTT topic for each user, e.g., based on their username
-            const userMqttTopic = `mytopic/nielit/${username}`;
-  
-            // Store the username in the topicUserMap
-            topicUserMap[userMqttTopic] = username;
-
           // Set session variable to indicate user is logged in
           req.session.loggedInUser = username;
+          loggedInUsername = username; // Store username in the global variable
           res.redirect('/'); // Redirect to the home page after successful login
         } else {
           res.status(401).json({ error: 'Authentication failed' });
@@ -230,7 +212,6 @@ app.post('/login', (req, res) => {
     }
   });
 });
-
 
 // Render login form
 app.get('/login', (req, res) => {
@@ -266,7 +247,6 @@ app.post('/register', (req, res) => {
     }
   });
 });
-
 
 // Render register form
 app.get('/register', (req, res) => {
@@ -318,4 +298,4 @@ app.post('/logout', (req, res) => {
 // Server listen
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-}); 
+});
