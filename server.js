@@ -163,6 +163,9 @@ io.on('connection', (socket) => {
 
     // Emit the toggleSwitch event to other connected clients
     socket.broadcast.emit('toggleSwitch', { isChecked, username });
+
+    // Update the loggedInUsername when a user interacts with the socket
+    loggedInUsername = username;
   });
 
   socket.on('disconnect', () => {
