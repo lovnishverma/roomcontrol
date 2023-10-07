@@ -65,17 +65,22 @@ app.use(express.static('public'));
 app.use(
   session({
     store: new SQLiteStore(),
-    secret: 'mqtt@817',
+    secret: 'mqtt@1867817',
     resave: false,
     saveUninitialized: true,
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 1 week
   })
 );
 
+
 client.on('connect', () => {
   console.log('Connected to MQTT broker');
   client.subscribe(mqttTopic, { qos });
+
+  // Populate topicUserMap with the username
+  topicUserMap[mqttTopic] = loggedInUsername;
 });
+
 
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
@@ -84,8 +89,8 @@ client.on('message', (topic, message) => {
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    // Retrieve the username from the session of the request
-    const username = clientSocketMap[topic] || 'Unknown User';
+    // Retrieve the username associated with the MQTT topic
+    const username = topicUserMap[topic] || 'Unknown User';
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -99,7 +104,7 @@ client.on('message', (topic, message) => {
       [formattedDate, formattedTime, receivedCommand, appStatus, username],
       (err) => {
         if (err) {
-          console.error('Error inserting data into database:', err.message);
+          console.error('Error inserting data into the database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
 
@@ -118,8 +123,6 @@ client.on('message', (topic, message) => {
     io.emit('statusUpdate', appStatus);
   }
 });
-
-
 
 
 // Middleware to check if user is logged in
@@ -204,8 +207,11 @@ app.post('/login', (req, res) => {
           console.error('Error comparing passwords:', bcryptErr.message);
           res.status(500).json({ error: 'Internal Server Error' });
         } else if (result) {
+          // Store the username in the clientSocketMap
+          clientSocketMap[req.sessionID] = username;
+
           // Set session variable to indicate user is logged in
-          req.session.loggedInUser = username; // Set the session variable here
+          req.session.loggedInUser = username;
           res.redirect('/'); // Redirect to the home page after successful login
         } else {
           res.status(401).json({ error: 'Authentication failed' });
