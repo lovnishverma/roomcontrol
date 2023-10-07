@@ -20,6 +20,8 @@ const qos = 0;
 
 const client = mqtt.connect(brokerUrl);
 
+const clientSocketMap = {};
+
 let loggedInUsername = null;
 let appStatus = 'off';
 
@@ -75,13 +77,16 @@ client.on('connect', () => {
   client.subscribe(mqttTopic, { qos });
 });
 
-client.on('message', (req, res, topic, message) => {
+client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
     const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
-    const username = req.session.loggedInUsername;
+
+    // Retrieve the username associated with the socket that sent the message
+    const socketId = clientSocketMap[topic];
+    const username = socketUserMap[socketId] || loggedInUsername;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -155,6 +160,8 @@ io.on('connection', (socket) => {
   socket.on('toggleSwitch', (data) => {
     const { isChecked, username } = data;
 
+    // Store the username associated with the socket ID
+    socketUserMap[socket.id] = username;
 
     // Emit the toggleSwitch event to other connected clients
     socket.broadcast.emit('toggleSwitch', { isChecked, username });
@@ -162,6 +169,8 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('A client disconnected');
+    // Remove the socket ID and username mapping when a client disconnects
+    delete socketUserMap[socket.id];
   });
 });
 
