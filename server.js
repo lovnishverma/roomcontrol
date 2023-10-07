@@ -22,6 +22,7 @@ const client = mqtt.connect(brokerUrl);
 
 const clientSocketMap = {};
 
+let loggedInUsername = null;
 let appStatus = 'off';
 
 // Connect to the SQLite database for users
@@ -67,7 +68,7 @@ app.use(
     secret: 'mqtt@817',
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }, // 1 week
+    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 1 week
   })
 );
 
@@ -83,8 +84,9 @@ client.on('message', (topic, message) => {
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    // Retrieve the username associated with the MQTT message
-    const username = clientSocketMap[topic] || 'Unknown User';
+    // Retrieve the username associated with the socket that sent the message
+    const socketId = clientSocketMap[topic];
+    const username = socketUserMap[socketId] || loggedInUsername;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -101,6 +103,7 @@ client.on('message', (topic, message) => {
           console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
+
           // Emit newEntry event to connected clients
           io.emit('newEntry', {
             date: formattedDate,
@@ -117,7 +120,10 @@ client.on('message', (topic, message) => {
   }
 });
 
+
+
 // Middleware to check if user is logged in
+
 const isLoggedIn = (req, res, next) => {
   if (req.session.loggedInUser) {
     next();
@@ -146,14 +152,16 @@ app.get('/app-status', (req, res) => {
 const server = http.createServer(app);
 const io = socketIo(server);
 
+const socketUserMap = {}; // Initialize a map to store socket IDs and usernames
+
 io.on('connection', (socket) => {
   console.log('A client connected');
 
   socket.on('toggleSwitch', (data) => {
     const { isChecked, username } = data;
 
-    // Store the username associated with the socket
-    clientSocketMap[socket.id] = username;
+    // Store the username associated with the socket ID
+    socketUserMap[socket.id] = username;
 
     // Emit the toggleSwitch event to other connected clients
     socket.broadcast.emit('toggleSwitch', { isChecked, username });
@@ -161,10 +169,11 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('A client disconnected');
-    // Remove the socket ID when a client disconnects
-    delete clientSocketMap[socket.id];
+    // Remove the socket ID and username mapping when a client disconnects
+    delete socketUserMap[socket.id];
   });
 });
+
 
 app.get('/historic-data', isLoggedIn, (req, res) => {
   // Retrieve data from the database and order by the most recent entries
@@ -197,6 +206,7 @@ app.post('/login', (req, res) => {
         } else if (result) {
           // Set session variable to indicate user is logged in
           req.session.loggedInUser = username;
+          loggedInUsername = username; // Store username in the global variable
           res.redirect('/'); // Redirect to the home page after successful login
         } else {
           res.status(401).json({ error: 'Authentication failed' });
@@ -205,6 +215,7 @@ app.post('/login', (req, res) => {
     }
   });
 });
+
 
 // Render login form
 app.get('/login', (req, res) => {
@@ -241,6 +252,7 @@ app.post('/register', (req, res) => {
   });
 });
 
+
 // Render register form
 app.get('/register', (req, res) => {
   res.render('register');
@@ -264,6 +276,7 @@ app.post('/delete-data', (req, res) => {
 app.get('/', isLoggedIn, (req, res) => {
   // Retrieve user-specific data or perform any other actions you need
   // For example, you can fetch additional data from the database based on the logged-in user
+
   res.render('home', {
     username: req.session.loggedInUser,
     // Pass any additional data you want to display on the home page
@@ -273,7 +286,7 @@ app.get('/', isLoggedIn, (req, res) => {
 // Define the /logout route
 app.post('/logout', (req, res) => {
   // Clear the user's session data to log them out
-  req.session.destroy((err) => {
+  req.session.destroy(err => {
     if (err) {
       console.error('Error while logging out:', err);
     } else {
@@ -290,4 +303,4 @@ app.post('/logout', (req, res) => {
 // Server listen
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-});
+}); 
