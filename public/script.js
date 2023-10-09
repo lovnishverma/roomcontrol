@@ -130,3 +130,17 @@ const toggleSwitch = document.getElementById('toggleSwitch');
 
         // Start continuous recognition
         recognition.start();
+
+$(document).ready(function () {
+            // Your existing JavaScript code here
+
+            // Function to start voice recognition
+            const startRecognition = () => {
+                recognition.start();
+                console.log('Voice recognition started');
+            };
+
+            // Add click event listener to the "Start Voice Recognition" button
+            const startButton = document.getElementById('startVoiceRecognition');
+            startButton.addEventListener('click', startRecognition);
+        });

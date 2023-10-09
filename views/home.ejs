@@ -10,7 +10,12 @@
   <link rel="stylesheet" href="styles.css">
   <audio id="clickSound">
     <source src="https://cdn.glitch.global/08e63b66-17e6-4a37-b447-cb3acf6954ba/click.mp3?v=1693077805076" type="audio/mpeg">
-  </audio>
+     </audio>
+    <audio id="audio" preload="auto">
+    <source src="https://cdn.glitch.global/c9c73aab-9068-4ce2-bf4b-7b548ee5ac04/click.mp3?v=1696872032277" type="audio/mpeg">
+</audio>
+
+ 
 </head>
 <body>
   <div class="container-fluid d-flex align-items-center justify-content-center min-vh-100">
@@ -24,6 +29,8 @@
         </label>
         <h6 class="text-center">
           <div id="appStatus">Switch Status: off</div>
+          <!-- Button to reinitialize voice recognition -->
+    <button id="startVoiceRecognition">Start Voice Recognition</button>
         </h6>
           <h6> <a class="btn btn-sm btn-history" href="/historic-data">View History</a>
         </h6>
