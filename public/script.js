@@ -112,8 +112,8 @@ const toggleSwitch = document.getElementById('toggleSwitch');
     } else if (transcript.includes('life')) {
         speak('जीवन का अर्थ है खुशियों और साझा करने में!');
     }  
-          else if (transcript.includes('gali')) {
-        speak('gali maat do');
+          else if (transcript.includes('love')) {
+        speak('love you too ji');
     }   
           else {
         speak('मुझे माफ़ करें, मैं इस कमांड को समझ नहीं पाया।');
