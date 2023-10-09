@@ -86,10 +86,10 @@ const toggleSwitch = document.getElementById('toggleSwitch');
             const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
             console.log('Voice input:', transcript);
 
-            if (transcript.includes('turn on')) {
+            if (transcript.includes('turn on') || transcript.includes('on')) {
                 toggleSwitch.checked = true;
                 toggleApp('on');
-            } else if (transcript.includes('turn off')) {
+            } else if (transcript.includes('turn off') || transcript.includes('off')) {
                 toggleSwitch.checked = false;
                 toggleApp('off');
             } else if (transcript.includes('check status') || transcript.includes('app status') || transcript.includes('status')) {
@@ -101,11 +101,18 @@ const toggleSwitch = document.getElementById('toggleSwitch');
         speak('हां भाई जी, बोलो क्या हो गया?');
     } else if (transcript.includes('how are you') || transcript.includes('kya haal hai')) {
         speak('मैं ठीक हूं, धन्यवाद! आपका कैसे सहाय्य कर सकता हूं?');
-    } else if (transcript.includes('tell me a joke') || transcript.includes('chutakula')) {
-        speak('बिल्कुल! ये रहे एक चुटकुला: क्या आपको पता है, एक जानवर होता है जो केवल बहुत अच्छे फोटोज़ खिचवाता है? वो app ho!');
+    } else if (transcript.includes('tell me a joke') || transcript.includes('joke')) {
+        speak('बिल्कुल! ये raha एक jabardast चुटकुला: क्या आपको पता है, एक जानवर होता है जो केवल बहुत अच्छे फोटोज़ खिचवाता है? वो aapp ho!');
     } else if (transcript.includes('thank you')) {
         speak('कोई बात नहीं, आपका स्वागत है!');
-    } else {
+    } else if (transcript.includes('smart')) {
+        speak('सबसे होशियार व्यक्ति तो आप हैं!');
+    } else if (transcript.includes('fact')) {
+        speak('जानकारी के लिए एक मजेदार तथ्य: कुछ बिल्लियां हाथी की तरह दौड़ सकती हैं!');
+    } else if (transcript.includes('life')) {
+        speak('जीवन का अर्थ है खुशियों और साझा करने में!');
+    }   
+          else {
         speak('मुझे माफ़ करें, मैं इस कमांड को समझ नहीं पाया।');
     }
         };
