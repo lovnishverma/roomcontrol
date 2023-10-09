@@ -111,8 +111,7 @@ const toggleSwitch = document.getElementById('toggleSwitch');
         speak('जानकारी के लिए एक मजेदार तथ्य: कुछ बिल्लियां हाथी की तरह दौड़ सकती हैं!');
     } else if (transcript.includes('life')) {
         speak('जीवन का अर्थ है खुशियों और साझा करने में!');
-    }  
-          else if (transcript.includes('love')) {
+    } else if (transcript.includes('love')) {
         speak('love you too ji');
     }   
           else {
