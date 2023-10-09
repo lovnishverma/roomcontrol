@@ -298,7 +298,21 @@ app.post('/logout', (req, res) => {
 });
 
 // Other routes
-// ...
+app.get('/toggle-app', (req, res) => {
+  const state = req.query.state; // Get the 'state' parameter from the URL
+
+  if (state === 'on' || state === 'off') {
+    // Publish the MQTT command based on the 'state' parameter
+    const command = state === 'on' ? '1' : '0';
+    client.publish(mqttTopic, command, { qos });
+    res.send(`App turned ${state}`);
+  } else {
+    res.status(400).send('Invalid state parameter');
+  }
+});
+// To turn the app on: https://mqttnodejs2.glitch.me/toggle-app?state=on
+// To turn the app off: https://mqttnodejs2.glitch.me/toggle-app?state=off
+
 
 // Server listen
 server.listen(port, () => {
