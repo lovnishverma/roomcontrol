@@ -96,11 +96,18 @@ const toggleSwitch = document.getElementById('toggleSwitch');
         checkStatus();
             }
           else if (transcript.includes('developer')) {
-            speak('iss app ka developer Lovnish Verma hai');
-        }
-          else if (transcript.includes('chandan')) {
-            speak('chandan toh gandu hai sala maadaarchhoode');
-        }
+        speak('इस ऐप के डेवलपर Lovnish Verma है');
+    } else if (transcript.includes('hello')) {
+        speak('हां भाई जी, बोलो क्या हो गया?');
+    } else if (transcript.includes('how are you') || transcript.includes('kya haal hai')) {
+        speak('मैं ठीक हूं, धन्यवाद! आपका कैसे सहाय्य कर सकता हूं?');
+    } else if (transcript.includes('tell me a joke') || transcript.includes('chutakula')) {
+        speak('बिल्कुल! ये रहे एक चुटकुला: क्या आपको पता है, एक जानवर होता है जो केवल बहुत अच्छे फोटोज़ खिचवाता है? वो app ho!');
+    } else if (transcript.includes('thank you')) {
+        speak('कोई बात नहीं, आपका स्वागत है!');
+    } else {
+        speak('मुझे माफ़ करें, मैं इस कमांड को समझ नहीं पाया।');
+    }
         };
 
         // Function to check app status
