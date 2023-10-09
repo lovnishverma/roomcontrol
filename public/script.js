@@ -70,10 +70,10 @@ const toggleSwitch = document.getElementById('toggleSwitch');
                     return response.text();
                 })
                 .then(data => {
-                    console.log(`App state changed to ${state}`);
+                    console.log(`Swith ${state} ho gya hai`);
               
                     // Play click sound when the switch is toggled
-                    speak(`The app status is turned ${state}`);
+                    speak(`Switch ${state} ho gaya hai ji`);
                     audio.play();
                 })
                 .catch(error => {
@@ -95,6 +95,12 @@ const toggleSwitch = document.getElementById('toggleSwitch');
             } else if (transcript.includes('check status') || transcript.includes('app status') || transcript.includes('status')) {
         checkStatus();
             }
+          else if (transcript.includes('developer')) {
+            speak('iss app ka developer Lovnish Verma hai');
+        }
+          else if (transcript.includes('chandan')) {
+            speak('chandan toh gandu hai sala maadaarchhoode');
+        }
         };
 
         // Function to check app status
@@ -111,7 +117,7 @@ const toggleSwitch = document.getElementById('toggleSwitch');
                     const appStatusText = document.getElementById('appStatus'); // Get the appStatus element
                     if (appStatusText) {
                         appStatusText.textContent = `App Status: ${appStatus}`;
-                        speak(`The app status is currently ${appStatus}`);
+                        speak(`iss samay switch ka status ${appStatus} hai ji`);
                     } else {
                         console.error('appStatusText element not found');
                     }
