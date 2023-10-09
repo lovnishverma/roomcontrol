@@ -50,3 +50,52 @@ $(document).ready(function () {
     updateAppStatus(data.status);
   });
 });
+
+const toggleSwitch = document.getElementById('toggleSwitch');
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        recognition.continuous = true; // Enable continuous recognition
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+            console.log('Voice input:', transcript);
+
+            if (transcript.includes('turn on')) {
+                toggleSwitch.checked = true;
+                toggleApp('on');
+            } else if (transcript.includes('turn off')) {
+                toggleSwitch.checked = false;
+                toggleApp('off');
+            }
+        };
+
+        recognition.onend = function() {
+            console.log('Voice recognition ended');
+        };
+
+        toggleSwitch.addEventListener('change', () => {
+            const state = toggleSwitch.checked ? 'on' : 'off';
+            toggleApp(state);
+        });
+
+        function toggleApp(state) {
+            const url = `https://mqttnodejs2.glitch.me/toggle-app?state=${state}`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log(`App state changed to ${state}`);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Start continuous recognition
+        recognition.start();
