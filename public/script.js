@@ -114,8 +114,8 @@ const toggleSwitch = document.getElementById('toggleSwitch');
     } else if (transcript.includes('love')) {
         speak('love you too ji');
     }  
-          else if (transcript.includes('roop')) {
-        speak('samroop ki jai ho');
+          else if (transcript.includes('chandan')) {
+        speak('Nishit Bhai ji aur sath mai hai Samroop');
     }  
           else {
         speak('मुझे माफ़ करें, मैं इस कमांड को समझ नहीं पाया।');
