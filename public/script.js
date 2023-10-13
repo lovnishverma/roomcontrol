@@ -96,7 +96,7 @@ const toggleSwitch = document.getElementById('toggleSwitch');
         checkStatus();
             }
           else if (transcript.includes('developer')) {
-        speak('इस ऐप के डेवलपर Lovnish Verma है');
+        speak('इस ऐप ka डेवलपर NIELIT ROPAR है');
     } else if (transcript.includes('hello')) {
         speak('हां भाई जी, बोलो क्या हो गया?');
     } else if (transcript.includes('how are you') || transcript.includes('kya haal hai')) {
@@ -114,8 +114,8 @@ const toggleSwitch = document.getElementById('toggleSwitch');
     } else if (transcript.includes('love')) {
         speak('love you too ji');
     }  
-          else if (transcript.includes('chandan')) {
-        speak('Nishit Bhai ji aur sath mai hai Samroop');
+      else if (transcript.includes('about you')) {
+        speak('I can turn on off switches anywhere from the world');
     }  
           else {
         speak('मुझे माफ़ करें, मैं इस कमांड को समझ नहीं पाया।');
