@@ -1,6 +1,6 @@
 $(document).ready(function () {
   // Connect to the WebSocket server
-  const socket = io();
+const socket = io();
 
   // Get a reference to the audio element
   const clickSound = document.getElementById('clickSound');
@@ -56,6 +56,25 @@ $(document).ready(function () {
   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   recognition.continuous = true;
 
+  
+  // Function to speak the current time
+const synth = window.speechSynthesis;
+  
+  const speakTime = () => {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const amOrPm = hours >= 12 ? 'PM' : 'AM';
+
+  // Convert hours to 12-hour format
+  const hours12 = hours % 12 || 12; 
+
+  const timeString = `${hours12} ${amOrPm} and ${minutes} minutes.`;
+
+  const utterance = new SpeechSynthesisUtterance(`The current time is ${timeString}`);
+  synth.speak(utterance);
+};
+  
   // Add a function to toggle the switch based on voice commands
   const toggleApp = (state) => {
     const url = `https://mqttnodejs.glitch.me/toggle-app?state=${state}`;
@@ -109,7 +128,10 @@ $(document).ready(function () {
       speak('love you too');
     } else if (transcript.includes('about you')) {
       speak('I can turn on off switches anywhere from the world');
-    } else {
+    }  else if (transcript.includes('time')) {
+    speakTime();
+    }
+    else {
       speak('मुझे माफ़ करें, मैं इस कमांड को समझ नहीं पाया।');
     }
   };
