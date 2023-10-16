@@ -96,7 +96,7 @@ $(document).ready(function () {
     } else if (transcript.includes('how are you') || transcript.includes('kya haal hai')) {
       speak('मैं ठीक हूं, धन्यवाद! आपका कैसे सहाय्य कर सकता हूं?');
     } else if (transcript.includes('tell me a joke') || transcript.includes('joke')) {
-      speak('बिल्कुल! ये raha एक jabardast चुटकुला: क्या आपको पता है, एक जानवर होता है जो केवल बहुत अच्छे फोटोज़ खिचवाता है? वो aapp ho!');
+      speak('I am so good at sleeping I can do it with my eyes closed!');
     } else if (transcript.includes('thank you')) {
       speak('कोई बात नहीं, आपका स्वागत है!');
     } else if (transcript.includes('smart')) {
@@ -128,7 +128,7 @@ $(document).ready(function () {
         const appStatusText = document.getElementById('appStatus');
         if (appStatusText) {
           appStatusText.textContent = `App Status: ${appStatus}`;
-          speak(`iss samay switch ka status ${appStatus} hai`);
+          speak(`Right now Switch status is ${appStatus}`);
         } else {
           console.error('appStatusText element not found');
         }
