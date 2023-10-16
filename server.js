@@ -8,6 +8,7 @@ const moment = require('moment-timezone');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
+const cron = require('node-cron');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -120,7 +121,19 @@ client.on('message', (topic, message) => {
   }
 });
 
+// Schedule to turn on the switch at 6:00 PM every day
+cron.schedule('0 18 * * *', () => {
+  const command = '1'; // Turn on command
+  client.publish(mqttTopic, command, { qos });
+  console.log('Scheduled task: Turn on the switch');
+});
 
+// Schedule to turn off the switch at 7:00 AM every day
+cron.schedule('0 7 * * *', () => {
+  const command = '0'; // Turn off command
+  client.publish(mqttTopic, command, { qos });
+  console.log('Scheduled task: Turn off the switch');
+});
 
 // Middleware to check if user is logged in
 
