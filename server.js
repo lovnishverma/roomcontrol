@@ -328,12 +328,7 @@ app.get('/toggle-app', (req, res) => {
 
 
 
-
-
-app.use(bodyParser.json());
-
-// Initialize user context using a global variable
-const context = {};
+app.use(bodyParser.json()); // Use JSON parser
 
 // Predefined responses based on patterns
 const responses = [
@@ -342,13 +337,22 @@ const responses = [
     { pattern: /joke/i, response: 'Why did the scarecrow win an award? Because he was outstanding in his field!' },
     { pattern: /(my name is|I am) (.*)/i, response: 'Nice to meet you, $2!' },
     { pattern: /What is the communication address of the NIELIT HQ?|nielit address/i, response: 'Address to contact NIELIT is: NIELIT Bhawan, Plot No. 3, PSP Pocket, Sector-8, Dwarka, New Delhi-110077, Helpline No. (Toll Free) - 1800116511 Phone:- 91-11-2530 8300 with 29 lines Email:- contact@nielit.gov.in' },
+    { pattern: /help/i, response: 'I can help you turn on/off switches remotely. Just tell me which switch you want to control.' },
+    { pattern: /lights on/i, response: 'Sure, turning the lights on.' },
+    { pattern: /lights off/i, response: 'Okay, turning the lights off.' },
+    { pattern: /fan on/i, response: 'Fan is now turned on.' },
+    { pattern: /fan off/i, response: 'Fan is now turned off.' },
+    { pattern: /temperature/i, response: 'I can help you monitor the temperature, but you need to provide more details.' },
+    { pattern: /security/i, response: 'Your security is our priority. How can I assist you with security measures?' },
+    { pattern: /goodbye|bye|exit/i, response: 'Goodbye! If you need assistance, feel free to come back.' },
+    { pattern: /status/i, response: 'Checking the status. Please wait...' },
 ];
 
 
 // Handle user messages based on predefined patterns
 function handleUserMessage(userMessage) {
     let response = "I'm sorry, I don't understand that question. Please ask something else.";
-    for (const { pattern, responseText } of responses) {
+    for (const { pattern, response: responseText } of responses) { // Adjusted responseText
         if (pattern.test(userMessage)) {
             response = responseText;
             break;
