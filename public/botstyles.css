@@ -50,19 +50,7 @@
              box-sizing: border-box;
         }
 
-        /* Voice input button style */
-        /*#voice-button {*/
-        /*    background-color: #4CAF50;*/
-        /*    color: white;*/
-        /*    border: none;*/
-        /*    border-radius: 50%;*/
-        /*    width: 60px;*/
-        /*    height: 60px;*/
-        /*    cursor: pointer;*/
-        /*    text-align: center;*/
-        /*    font-size: 24px;*/
-        /*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);*/
-        /*}*/
+       
 
         /* Voice output style */
         #voice-output {

@@ -4,9 +4,9 @@
 	padding: 0;
 }
 
-:root {
+/* :root {
 	font-size: calc(45px + (80 - 64) * (100vw - 320px)/(960 - 320));
-}
+} */
 
 /* Custom CSS */
 .btn-custom {
@@ -38,10 +38,10 @@ body {
 	background: #bbb;
 }
 
-/* input {
+input {
 	display: block;
 	margin-bottom: 1.5em;
-} */
+}
 
 main {
 	padding: 1.5em 0 0 0;
