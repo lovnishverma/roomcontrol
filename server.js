@@ -327,6 +327,45 @@ app.get('/toggle-app', (req, res) => {
 // To turn the app off: https://mqttnodejs2.glitch.me/toggle-app?state=off
 
 
+
+
+
+app.use(bodyParser.json());
+
+// Initialize user context using a global variable
+const context = {};
+
+// Predefined responses based on patterns
+const responses = [
+    { pattern: /hello|hi|hola/i, response: 'Hello! How can I assist you today?' },
+    { pattern: /how are you/i, response: 'I am just a chatbot, but I\'m here to assist you!' },
+    { pattern: /joke/i, response: 'Why did the scarecrow win an award? Because he was outstanding in his field!' },
+    { pattern: /(my name is|I am) (.*)/i, response: 'Nice to meet you, $2!' },
+    { pattern: /What is the communication address of the NIELIT HQ?|nielit address/i, response: 'Address to contact NIELIT is: NIELIT Bhawan, Plot No. 3, PSP Pocket, Sector-8, Dwarka, New Delhi-110077, Helpline No. (Toll Free) - 1800116511 Phone:- 91-11-2530 8300 with 29 lines Email:- contact@nielit.gov.in' },
+];
+
+
+// Handle user messages based on predefined patterns
+function handleUserMessage(userMessage) {
+    let response = "I'm sorry, I don't understand that question. Please ask something else.";
+    for (const { pattern, responseText } of responses) {
+        if (pattern.test(userMessage)) {
+            response = responseText;
+            break;
+        }
+    }
+    return response;
+}
+
+app.post('/api/chat', (req, res) => {
+    const userMessage = req.body.userMessage;
+    const response = handleUserMessage(userMessage);
+    res.json({ response });
+});
+
+
+
+
 // Server listen
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);

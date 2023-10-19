@@ -34,7 +34,7 @@
             // You can use AJAX to make a request to your bot.php script.
 
             // Example using fetch (you may need to customize this part):
-            fetch('https://kcattendence.000webhostapp.com/bot.php', {
+            fetch('/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
