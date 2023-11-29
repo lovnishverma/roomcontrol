@@ -334,23 +334,36 @@ app.use(bodyParser.json()); // Use JSON parser
 
 // Predefined responses based on patterns
 const responses = [
-    { pattern: /lights on|light on|turn on/i, response: 'Sure, turning the lights on.', action: 'turnOnLights' },
-    { pattern: /lights off|light off|turn off/i, response: 'Okay, turning the lights off.', action: 'turnOffLights' },
-   { pattern: /status/i, response: 'Checking the status. Please wait...', action: 'checkStatus' },
+    { pattern: /lights on|light on|switch on/i, response: 'Sure, turning the lights on.', action: 'turnOnLights' },
+    { pattern: /lights off|light off|switch off/i, response: 'Okay, turning the lights off.', action: 'turnOffLights' },
    { pattern: /hello|hi|hola/i, response: 'Hello! How can I assist you today?' },
     { pattern: /how are you/i, response: 'I am just a chatbot, but I\'m here to assist you!' },
     { pattern: /joke/i, response: 'Why did the scarecrow win an award? Because he was outstanding in his field!' },
     { pattern: /(my name is|I am) (.*)/i, response: 'Nice to meet you, $2!' },
     { pattern: /What is the communication address of the NIELIT HQ?|nielit address/i, response: 'Address to contact NIELIT is: NIELIT Bhawan, Plot No. 3, PSP Pocket, Sector-8, Dwarka, New Delhi-110077, Helpline No. (Toll Free) - 1800116511 Phone:- 91-11-2530 8300 with 29 lines Email:- contact@nielit.gov.in' },
     { pattern: /help/i, response: 'I can help you turn on/off switches remotely. Just tell me which switch you want to control.' },
-    { pattern: /lights on/i, response: 'Sure, turning the lights on.' },
-    { pattern: /lights off/i, response: 'Okay, turning the lights off.' },
-    { pattern: /fan on/i, response: 'Fan is now turned on.' },
-    { pattern: /fan off/i, response: 'Fan is now turned off.' },
-    { pattern: /temperature/i, response: 'I can help you monitor the temperature, but you need to provide more details.' },
     { pattern: /security/i, response: 'Your security is our priority. How can I assist you with security measures?' },
     { pattern: /goodbye|bye|exit/i, response: 'Goodbye! If you need assistance, feel free to come back.' },
+    { pattern: /status/i, response: 'Checking the status. Please wait...', action: 'checkStatus' },
 ];
+
+// ...
+
+// Function to handle user messages and actions
+function handleUserMessage(userMessage) {
+    let response = "I'm sorry, I don't understand that question. Please ask something else.";
+    let action = null;
+
+    for (const { pattern, response: responseText, action: responseAction } of responses) {
+        if (pattern.test(userMessage)) {
+            response = responseText;
+            action = responseAction;
+            break;
+        }
+    }
+
+    return { response, action };
+}
 
 // ...
 
@@ -382,7 +395,8 @@ app.post('/api/chat', (req, res) => {
 
 // ...
 
+
 // Server listen
 server.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+  console.log(`Server is running on port ${port}`);
+}); 
