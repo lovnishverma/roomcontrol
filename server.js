@@ -344,7 +344,6 @@ const responses = [
     { pattern: /help/i, response: 'I can help you turn on/off switches remotely. Just tell me which switch you want to control.' },
     { pattern: /security/i, response: 'Your security is our priority. How can I assist you with security measures?' },
     { pattern: /goodbye|bye|exit/i, response: 'Goodbye! If you need assistance, feel free to come back.' },
-    { pattern: /status/i, response: 'Checking the status. Please wait...', action: 'checkStatus' },
 ];
 
 // ...
@@ -368,6 +367,7 @@ function handleUserMessage(userMessage) {
 // ...
 
 // API endpoint for chat with action handling
+// API endpoint for chat with action handling
 app.post('/api/chat', (req, res) => {
     const userMessage = req.body.userMessage;
     const { response, action } = handleUserMessage(userMessage);
@@ -377,31 +377,21 @@ app.post('/api/chat', (req, res) => {
         // Add logic to turn on lights (e.g., publish MQTT command)
         const command = '1';
         client.publish(mqttTopic, command, { qos });
+        io.emit('statusUpdate', 'on'); // Update status immediately for actions
         res.json({ response }); // Respond immediately for actions without checking status
     } else if (action === 'turnOffLights') {
         // Add logic to turn off lights (e.g., publish MQTT command)
         const command = '0';
-        client.publish(mqttTopic, command, { qos }, () => {
-            // Status check callback after lights-off command is acknowledged
-            checkStatusAndRespond(res, response);
-        });
-    } else if (action === 'checkStatus') {
-        // Add logic to check the status (e.g., query the current status)
-        checkStatusAndRespond(res, response);
+        client.publish(mqttTopic, command, { qos });
+        io.emit('statusUpdate', 'off'); // Update status immediately for actions
+        res.json({ response }); // Respond immediately for actions without checking status
     } else {
         // No specific action, respond with the general message
         res.json({ response });
     }
 });
 
-// Function to check status and respond
-function checkStatusAndRespond(res, response) {
-    // Add logic to check the status (e.g., query the current status)
-    const currentStatus = appStatus;
-    res.json({ response, currentStatus });
-}
 
-// ...
 // ...
 // Server listen
 server.listen(port, () => {
