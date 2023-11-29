@@ -334,8 +334,9 @@ app.use(bodyParser.json()); // Use JSON parser
 
 // Predefined responses based on patterns
 const responses = [
-    { pattern: /lights on/i, response: 'Sure, turning the lights on.', action: 'turnOnLights' },
-    { pattern: /lights off/i, response: 'Okay, turning the lights off.', action: 'turnOffLights' },
+    { pattern: /lights on|light on|turn on/i, response: 'Sure, turning the lights on.', action: 'turnOnLights' },
+    { pattern: /lights off|light off|turn off/i, response: 'Okay, turning the lights off.', action: 'turnOffLights' },
+   { pattern: /status/i, response: 'Checking the status. Please wait...', action: 'checkStatus' },
    { pattern: /hello|hi|hola/i, response: 'Hello! How can I assist you today?' },
     { pattern: /how are you/i, response: 'I am just a chatbot, but I\'m here to assist you!' },
     { pattern: /joke/i, response: 'Why did the scarecrow win an award? Because he was outstanding in his field!' },
@@ -349,26 +350,7 @@ const responses = [
     { pattern: /temperature/i, response: 'I can help you monitor the temperature, but you need to provide more details.' },
     { pattern: /security/i, response: 'Your security is our priority. How can I assist you with security measures?' },
     { pattern: /goodbye|bye|exit/i, response: 'Goodbye! If you need assistance, feel free to come back.' },
-    { pattern: /status/i, response: 'Checking the status. Please wait...', action: 'checkStatus' },
 ];
-
-// ...
-
-// Function to handle user messages and actions
-function handleUserMessage(userMessage) {
-    let response = "I'm sorry, I don't understand that question. Please ask something else.";
-    let action = null;
-
-    for (const { pattern, response: responseText, action: responseAction } of responses) {
-        if (pattern.test(userMessage)) {
-            response = responseText;
-            action = responseAction;
-            break;
-        }
-    }
-
-    return { response, action };
-}
 
 // ...
 
@@ -399,10 +381,8 @@ app.post('/api/chat', (req, res) => {
 });
 
 // ...
-// Add other logics and routes as needed
-
 
 // Server listen
 server.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-}); 
+    console.log(`Server is running on port ${port}`);
+});
