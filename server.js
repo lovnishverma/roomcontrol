@@ -330,9 +330,13 @@ app.get('/toggle-app', (req, res) => {
 
 app.use(bodyParser.json()); // Use JSON parser
 
+// ...
+
 // Predefined responses based on patterns
 const responses = [
-    { pattern: /hello|hi|hola/i, response: 'Hello! How can I assist you today?' },
+    { pattern: /lights on/i, response: 'Sure, turning the lights on.', action: 'turnOnLights' },
+    { pattern: /lights off/i, response: 'Okay, turning the lights off.', action: 'turnOffLights' },
+   { pattern: /hello|hi|hola/i, response: 'Hello! How can I assist you today?' },
     { pattern: /how are you/i, response: 'I am just a chatbot, but I\'m here to assist you!' },
     { pattern: /joke/i, response: 'Why did the scarecrow win an award? Because he was outstanding in his field!' },
     { pattern: /(my name is|I am) (.*)/i, response: 'Nice to meet you, $2!' },
@@ -345,18 +349,10 @@ const responses = [
     { pattern: /temperature/i, response: 'I can help you monitor the temperature, but you need to provide more details.' },
     { pattern: /security/i, response: 'Your security is our priority. How can I assist you with security measures?' },
     { pattern: /goodbye|bye|exit/i, response: 'Goodbye! If you need assistance, feel free to come back.' },
-    { pattern: /status/i, response: 'Checking the status. Please wait...' },
-   { pattern: /lights on/i, response: 'Sure, turning the lights on.', action: 'turnOnLights' },
-    { pattern: /lights off/i, response: 'Okay, turning the lights off.', action: 'turnOffLights' },
+    { pattern: /status/i, response: 'Checking the status. Please wait...', action: 'checkStatus' },
 ];
 
-
-app.post('/api/chat', (req, res) => {
-    const userMessage = req.body.userMessage;
-    const response = handleUserMessage(userMessage);
-    res.json({ response });
-});
-
+// ...
 
 // Function to handle user messages and actions
 function handleUserMessage(userMessage) {
@@ -374,6 +370,8 @@ function handleUserMessage(userMessage) {
     return { response, action };
 }
 
+// ...
+
 // API endpoint for chat with action handling
 app.post('/api/chat', (req, res) => {
     const userMessage = req.body.userMessage;
@@ -382,19 +380,27 @@ app.post('/api/chat', (req, res) => {
     // Perform action if specified
     if (action === 'turnOnLights') {
         // Add logic to turn on lights (e.g., publish MQTT command)
-        client.publish(mqttTopic, '1', { qos });
+        const command = '1';
+        client.publish(mqttTopic, command, { qos });
+        res.json({ response }); // Respond immediately for actions without checking status
     } else if (action === 'turnOffLights') {
         // Add logic to turn off lights (e.g., publish MQTT command)
-        client.publish(mqttTopic, '0', { qos });
+        const command = '0';
+        client.publish(mqttTopic, command, { qos });
+        res.json({ response }); // Respond immediately for actions without checking status
     } else if (action === 'checkStatus') {
         // Add logic to check the status (e.g., query the current status)
         const currentStatus = appStatus;
-        res.json({ response: response, currentStatus: currentStatus });
-        return; // Return early to avoid sending the response again at the end
+        res.json({ response, currentStatus });
+    } else {
+        // No specific action, respond with the general message
+        res.json({ response });
     }
-
-    res.json({ response: response }); // Ensure the response is properly formatted
 });
+
+// ...
+// Add other logics and routes as needed
+
 
 // Server listen
 server.listen(port, () => {
