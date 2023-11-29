@@ -381,21 +381,28 @@ app.post('/api/chat', (req, res) => {
     } else if (action === 'turnOffLights') {
         // Add logic to turn off lights (e.g., publish MQTT command)
         const command = '0';
-        client.publish(mqttTopic, command, { qos });
-        res.json({ response }); // Respond immediately for actions without checking status
+        client.publish(mqttTopic, command, { qos }, () => {
+            // Status check callback after lights-off command is acknowledged
+            checkStatusAndRespond(res, response);
+        });
     } else if (action === 'checkStatus') {
         // Add logic to check the status (e.g., query the current status)
-        const currentStatus = appStatus;
-        res.json({ response, currentStatus });
+        checkStatusAndRespond(res, response);
     } else {
         // No specific action, respond with the general message
         res.json({ response });
     }
 });
 
+// Function to check status and respond
+function checkStatusAndRespond(res, response) {
+    // Add logic to check the status (e.g., query the current status)
+    const currentStatus = appStatus;
+    res.json({ response, currentStatus });
+}
+
 // ...
-
-
+// ...
 // Server listen
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
