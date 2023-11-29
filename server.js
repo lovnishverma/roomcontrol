@@ -346,20 +346,10 @@ const responses = [
     { pattern: /security/i, response: 'Your security is our priority. How can I assist you with security measures?' },
     { pattern: /goodbye|bye|exit/i, response: 'Goodbye! If you need assistance, feel free to come back.' },
     { pattern: /status/i, response: 'Checking the status. Please wait...' },
+   { pattern: /lights on/i, response: 'Sure, turning the lights on.', action: 'turnOnLights' },
+    { pattern: /lights off/i, response: 'Okay, turning the lights off.', action: 'turnOffLights' },
 ];
 
-
-// Handle user messages based on predefined patterns
-function handleUserMessage(userMessage) {
-    let response = "I'm sorry, I don't understand that question. Please ask something else.";
-    for (const { pattern, response: responseText } of responses) { // Adjusted responseText
-        if (pattern.test(userMessage)) {
-            response = responseText;
-            break;
-        }
-    }
-    return response;
-}
 
 app.post('/api/chat', (req, res) => {
     const userMessage = req.body.userMessage;
@@ -368,7 +358,43 @@ app.post('/api/chat', (req, res) => {
 });
 
 
+// Function to handle user messages and actions
+function handleUserMessage(userMessage) {
+    let response = "I'm sorry, I don't understand that question. Please ask something else.";
+    let action = null;
 
+    for (const { pattern, response: responseText, action: responseAction } of responses) {
+        if (pattern.test(userMessage)) {
+            response = responseText;
+            action = responseAction;
+            break;
+        }
+    }
+
+    return { response, action };
+}
+
+// API endpoint for chat with action handling
+app.post('/api/chat', (req, res) => {
+    const userMessage = req.body.userMessage;
+    const { response, action } = handleUserMessage(userMessage);
+
+    // Perform action if specified
+    if (action === 'turnOnLights') {
+        // Add logic to turn on lights (e.g., publish MQTT command)
+        client.publish(mqttTopic, '1', { qos });
+    } else if (action === 'turnOffLights') {
+        // Add logic to turn off lights (e.g., publish MQTT command)
+        client.publish(mqttTopic, '0', { qos });
+    } else if (action === 'checkStatus') {
+        // Add logic to check the status (e.g., query the current status)
+        const currentStatus = appStatus;
+        res.json({ response: response, currentStatus: currentStatus });
+        return; // Return early to avoid sending the response again at the end
+    }
+
+    res.json({ response: response }); // Ensure the response is properly formatted
+});
 
 // Server listen
 server.listen(port, () => {
