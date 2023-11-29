@@ -334,8 +334,8 @@ app.use(bodyParser.json()); // Use JSON parser
 
 // Predefined responses based on patterns
 const responses = [
-    { pattern: /lights on|light on|switch on/i, response: 'Sure, turning the lights on.', action: 'turnOnLights' },
-    { pattern: /lights off|light off|switch off/i, response: 'Okay, turning the lights off.', action: 'turnOffLights' },
+    { pattern: /lights on|light on|turn on|switch on/i, response: 'Sure, turning the lights on.', action: 'turnOnLights' },
+    { pattern: /lights off|light off|turn off|switch off/i, response: 'Okay, turning the lights off.', action: 'turnOffLights' },
    { pattern: /hello|hi|hola/i, response: 'Hello! How can I assist you today?' },
     { pattern: /how are you/i, response: 'I am just a chatbot, but I\'m here to assist you!' },
     { pattern: /joke/i, response: 'Why did the scarecrow win an award? Because he was outstanding in his field!' },
