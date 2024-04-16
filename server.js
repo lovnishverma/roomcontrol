@@ -16,7 +16,7 @@ const port = process.env.PORT || 3000;
 app.set('view engine', 'ejs'); // Set EJS as the view engine
 
 const brokerUrl = 'mqtt://broker.hivemq.com';
-const mqttTopic = 'mytopic/nielit';
+const mqttTopic = 'mytopic/bag';
 const qos = 0;
 
 const client = mqtt.connect(brokerUrl);
