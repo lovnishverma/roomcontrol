@@ -1,3 +1,12 @@
+$('#startVoiceRecognition').click(function() {
+  $('.voice-recognition').addClass('voice-recognition-active');
+  $('#voiceRecognitionFeedback').text('Listening...'); // Show the message
+  setTimeout(function() {
+    $('#voiceRecognitionFeedback').text(''); // Clear the message after a delay
+  }, 6000); // Adjust the delay as needed (e.g., 6000 milliseconds for 6 seconds)
+});
+
+
 $(document).ready(function () {
   // Connect to the WebSocket server
 const socket = io();

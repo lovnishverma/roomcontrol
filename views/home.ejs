@@ -22,17 +22,19 @@
     <main>
       <h1 class="text-center">MQTT LED Control</h1>
       <h6 class="text-center">Welcome, <%= username %>!</h6>
+      <div class="voice-recognition">
+        <button id="startVoiceRecognition" class="btn btn-lg btn-secondary">Start Voice Recognition</button>
+        <div id="voiceRecognitionFeedback" class="voice-feedback">Listening...</div>
+      </div>
       <label class="d-flex align-items-center justify-content-center">
         <input id="toggleSwitch" class="l" type="checkbox">
         <span class="slider"></span>
       </label>
-      <h6 id="appStatus">Switch Status: off</h6>
-      <!-- Button to reinitialize voice recognition -->
-      <button id="startVoiceRecognition" class="btn btn-sm btn-secondary">Start Voice Recognition</button>
+     <center> <h6 id="appStatus">Switch Status: off</h6> </center>
       <div class="btn-group d-flex justify-content-center">
-        <a class="btn btn-sm btn-history" href="/historic-data">View History</a>
+        <a class="btn btn-lg btn-history" href="/historic-data">View History</a>
         <form action="/logout" method="post">
-          <button class="btn btn-sm btn-custom" type="submit">Logout</button>
+          <button class="btn btn-lg btn-custom" type="submit">Logout</button>
         </form>
       </div>
     </main>

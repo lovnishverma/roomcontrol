@@ -5,7 +5,28 @@
 }
 
 body {
-  background: #bbb;
+  background: #f5f5f5;
+  font-family: 'Roboto', sans-serif;
+}
+
+.container {
+  background-color: rgba(255, 255, 255, 0.8); /* Adjust the last value for transparency */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+  padding: 20px;
+}
+
+
+.voice-recognition {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.voice-feedback {
+  display: none;
+  margin-top: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 }
 
 /* Custom Button Styles */
@@ -26,20 +47,21 @@ body {
 /* Toggle Switch Styles */
 .l {
   background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 0.75em;
+  border-radius: 1em; /* Increase border-radius for a rounder appearance */
   box-shadow: 0.125em 0.125em 0 0.125em rgba(0, 0, 0, 0.3) inset;
   color: #fdea7b;
   display: inline-flex;
   align-items: center;
   margin: auto;
   padding: 0.15em;
-  width: 3em;
-  height: 1.5em;
+  width: 4em; /* Adjust width to make the toggle switch wider */
+  height: 2em; /* Adjust height to make the toggle switch taller */
   transition: background-color 0.1s 0.3s ease-out, box-shadow 0.1s 0.3s ease-out;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
+
 
 .l:before, .l:after {
   content: "";
@@ -97,22 +119,20 @@ body {
   outline: 0;
 }
 
-/* Text Styles */
-h1 {
-  font-size: 1.5em;
-  margin-bottom: 0.5em;
+.btn-custom {
+  background-color: #f44336;
+  color: #fff;
+  border-color: #f44336;
 }
 
-h6 {
-  font-size: 1em;
-  margin-bottom: 0.5em;
+.btn-history {
+  background-color: #2196F3;
+  color: #fff;
+  border-color: #2196F3;
 }
 
-input {
-  font-size: 1em;
-}
-
-main {
-  padding: 1.5em 0;
-  text-align: center;  
+/* Voice Recognition Animation */
+.voice-recognition-active .voice-feedback {
+  display: block;
+  opacity: 1;
 }
