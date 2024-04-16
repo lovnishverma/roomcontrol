@@ -121,19 +121,19 @@ client.on('message', (topic, message) => {
   }
 });
 
-// Schedule to turn on the switch at 6:00 PM every day
-cron.schedule('0 18 * * *', () => {
-  const command = '1'; // Turn on command
-  client.publish(mqttTopic, command, { qos });
-  console.log('Scheduled task: Turn on the switch');
-});
+// // Schedule to turn on the switch at 6:00 PM every day
+// cron.schedule('0 18 * * *', () => {
+//   const command = '1'; // Turn on command
+//   client.publish(mqttTopic, command, { qos });
+//   console.log('Scheduled task: Turn on the switch');
+// });
 
-// Schedule to turn off the switch at 7:00 AM every day
-cron.schedule('0 7 * * *', () => {
-  const command = '0'; // Turn off command
-  client.publish(mqttTopic, command, { qos });
-  console.log('Scheduled task: Turn off the switch');
-});
+// // Schedule to turn off the switch at 7:00 AM every day
+// cron.schedule('0 7 * * *', () => {
+//   const command = '0'; // Turn off command
+//   client.publish(mqttTopic, command, { qos });
+//   console.log('Scheduled task: Turn off the switch');
+// });
 
 // Middleware to check if user is logged in
 
@@ -219,7 +219,6 @@ app.post('/login', (req, res) => {
         } else if (result) {
           // Set session variable to indicate user is logged in
           req.session.loggedInUser = username;
-          loggedInUsername = username; // Store username in the global variable
           res.redirect('/'); // Redirect to the home page after successful login
         } else {
           res.status(401).json({ error: 'Authentication failed' });
