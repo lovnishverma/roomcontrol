@@ -143,6 +143,7 @@ const isLoggedIn = (req, res, next) => {
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
   const username = req.session.loggedInUser; // Retrieve username from session
+  console.log('Username:', username); // Log username for debugging
   const message = { command, username }; // Include username in the message payload
   client.publish(mqttTopic, JSON.stringify(message), { qos });
 
@@ -154,6 +155,7 @@ app.post('/send-command', (req, res) => {
 
   res.send(`Command sent: ${command}`);
 });
+
 
 
 app.get('/app-status', (req, res) => {

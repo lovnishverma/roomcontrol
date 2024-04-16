@@ -1,6 +1,6 @@
 $(document).ready(function () {
   // Connect to the WebSocket server
-const socket = io();
+  const socket = io();
 
   // Get a reference to the audio element
   const clickSound = document.getElementById('clickSound');
@@ -32,7 +32,7 @@ const socket = io();
     const command = isChecked ? '1' : '0';
 
     // Emit the toggleSwitch event to the server
-    socket.emit('toggleSwitch', isChecked);
+    socket.emit('toggleSwitch', { isChecked, username: getUsername() });
 
     $.post('/send-command', { command }, function (data) {
       console.log(data);
@@ -56,28 +56,12 @@ const socket = io();
   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   recognition.continuous = true;
 
-  
-  // Function to speak the current time
-const synth = window.speechSynthesis;
-  
-  const speakTime = () => {
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const amOrPm = hours >= 12 ? 'PM' : 'AM';
-
-  // Convert hours to 12-hour format
-  const hours12 = hours % 12 || 12; 
-
-  const timeString = `${hours12} ${amOrPm} and ${minutes} minutes.`;
-
-  const utterance = new SpeechSynthesisUtterance(`The current time is ${timeString}`);
-  synth.speak(utterance);
-};
-  
-  // Add a function to toggle the switch based on voice commands
+  // Function to toggle the switch based on voice commands
   const toggleApp = (state) => {
-    const url = `https://mqttnodejs.glitch.me/toggle-app?state=${state}`;
+    const command = state === 'on' ? '1' : '0';
+    socket.emit('toggleSwitch', { isChecked: state === 'on', username: getUsername() });
+
+    const url = `/toggle-app?state=${state}`;
     fetch(url)
       .then(response => {
         if (!response.ok) {
@@ -129,16 +113,15 @@ const synth = window.speechSynthesis;
     } else if (transcript.includes('about you')) {
       speak('I can turn on off switches anywhere from the world');
     }  else if (transcript.includes('time')) {
-    speakTime();
-    }
-    else {
+      speakTime();
+    } else {
       speak('मुझे माफ़ करें, मैं इस कमांड को समझ नहीं पाया।');
     }
   };
 
   // Function to check app status
   function checkStatus() {
-    fetch('https://mqttnodejs.glitch.me/app-status')
+    fetch('/app-status')
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -165,6 +148,11 @@ const synth = window.speechSynthesis;
     const synth = window.speechSynthesis;
     const utterance = new SpeechSynthesisUtterance(message);
     synth.speak(utterance);
+  }
+
+  // Function to get username from session
+  function getUsername() {
+    return $('#loggedInUser').text().trim(); // Assuming username is stored in an element with id 'loggedInUser'
   }
 
   // Start continuous recognition
