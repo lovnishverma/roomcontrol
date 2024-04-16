@@ -80,12 +80,16 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
-    const { command, username } = JSON.parse(message.toString()); // Parse message payload
+    const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    if (command === '1') {
+    // Retrieve the username associated with the socket that sent the message
+    const socketId = clientSocketMap[topic];
+    const username = socketUserMap[socketId] || loggedInUsername;
+
+    if (receivedCommand === '1') {
       appStatus = 'on';
     } else {
       appStatus = 'off';
@@ -94,17 +98,18 @@ client.on('message', (topic, message) => {
     // Insert data into the SQLite database
     db.run(
       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-      [formattedDate, formattedTime, command, appStatus, username],
+      [formattedDate, formattedTime, receivedCommand, appStatus, username],
       (err) => {
         if (err) {
           console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
+
           // Emit newEntry event to connected clients
           io.emit('newEntry', {
             date: formattedDate,
             time: formattedTime,
-            command: command,
+            command: receivedCommand,
             status: appStatus,
             username: username,
           });
@@ -115,6 +120,44 @@ client.on('message', (topic, message) => {
     io.emit('statusUpdate', appStatus);
   }
 });
+
+// client.on('message', (topic, message) => {
+//   if (topic === mqttTopic) {
+//     const { command, username } = JSON.parse(message.toString()); // Parse message payload
+//     const currentDate = moment().tz('Asia/Kolkata');
+//     const formattedDate = currentDate.format('YYYY-MM-DD');
+//     const formattedTime = currentDate.format('hh:mm:ss A');
+
+//     if (command === '1') {
+//       appStatus = 'on';
+//     } else {
+//       appStatus = 'off';
+//     }
+
+//     // Insert data into the SQLite database
+//     db.run(
+//       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
+//       [formattedDate, formattedTime, command, appStatus, username],
+//       (err) => {
+//         if (err) {
+//           console.error('Error inserting data into database:', err.message);
+//         } else {
+//           console.log('Data has been inserted into the database');
+//           // Emit newEntry event to connected clients
+//           io.emit('newEntry', {
+//             date: formattedDate,
+//             time: formattedTime,
+//             command: command,
+//             status: appStatus,
+//             username: username,
+//           });
+//         }
+//       }
+//     );
+
+//     io.emit('statusUpdate', appStatus);
+//   }
+// });
 
 
 // // Schedule to turn on the switch at 6:00 PM every day
@@ -155,7 +198,6 @@ app.post('/send-command', (req, res) => {
 
   res.send(`Command sent: ${command}`);
 });
-
 
 app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
