@@ -8,6 +8,17 @@ const socket = io();
   // Load the audio
   clickSound.load();
 
+  function getUsername() {
+  // Implement the logic to retrieve the username
+  // For example, if you're using session:
+  const username = sessionStorage.getItem('username');
+  // Or if you're using a token-based authentication:
+  // const token = localStorage.getItem('token');
+  // Then send a request to your server to retrieve the username associated with the token
+  // Once you have the username, return it
+  return username;
+}
+  
   // Function to update app status and toggle switch
   function updateAppStatus(appStatus) {
     $('#appStatus').text('App Status: ' + appStatus);
@@ -97,8 +108,15 @@ const synth = window.speechSynthesis;
 
   // Add voice recognition for toggle commands
   recognition.onresult = function (event) {
-    const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
-    console.log('Voice input:', transcript);
+  const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+  console.log('Voice input:', transcript);
+
+  // Retrieve the username from the session or token
+  const username = getUsername(); // Implement this function to retrieve the username
+
+  // Send both the username and the voice command to the server
+  socket.emit('voiceCommand', { command: transcript, username });
+
 
     if (transcript.includes('turn on') || transcript.includes('on')) {
       toggleSwitch.checked = true;
