@@ -167,6 +167,7 @@ const io = socketIo(server);
 
 const socketUserMap = {}; // Initialize a map to store socket IDs and usernames
 
+// Server-side code
 io.on('connection', (socket) => {
   console.log('A client connected');
 
@@ -178,6 +179,33 @@ io.on('connection', (socket) => {
 
     // Emit the toggleSwitch event to other connected clients
     socket.broadcast.emit('toggleSwitch', { isChecked, username });
+
+    const receivedCommand = isChecked ? '1' : '0';
+    const currentDate = moment().tz('Asia/Kolkata');
+    const formattedDate = currentDate.format('YYYY-MM-DD');
+    const formattedTime = currentDate.format('hh:mm:ss A');
+
+    // Insert data into the SQLite database
+    db.run(
+      'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
+      [formattedDate, formattedTime, receivedCommand, appStatus, username],
+      (err) => {
+        if (err) {
+          console.error('Error inserting data into database:', err.message);
+        } else {
+          console.log('Data has been inserted into the database');
+
+          // Emit newEntry event to connected clients
+          io.emit('newEntry', {
+            date: formattedDate,
+            time: formattedTime,
+            command: receivedCommand,
+            status: appStatus,
+            username: username,
+          });
+        }
+      }
+    );
   });
 
   socket.on('disconnect', () => {
@@ -186,6 +214,7 @@ io.on('connection', (socket) => {
     delete socketUserMap[socket.id];
   });
 });
+
 
 
 app.get('/historic-data', isLoggedIn, (req, res) => {

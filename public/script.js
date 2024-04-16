@@ -32,7 +32,7 @@ const socket = io();
     const command = isChecked ? '1' : '0';
 
     // Emit the toggleSwitch event to the server
-    socket.emit('toggleSwitch', isChecked);
+    socket.emit('toggleSwitch', { isChecked, username: loggedInUsername });
 
     $.post('/send-command', { command }, function (data) {
       console.log(data);
