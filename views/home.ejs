@@ -8,63 +8,38 @@
   <title>MQTT Control</title>
   <link rel="icon" type="image/x-icon" href="https://cdn.glitch.global/08e63b66-17e6-4a37-b447-cb3acf6954ba/favicon.ico?v=1691737780870">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="botstyles.css">
   <audio id="clickSound">
     <source src="https://cdn.glitch.global/08e63b66-17e6-4a37-b447-cb3acf6954ba/click.mp3?v=1693077805076" type="audio/mpeg">
-     </audio>
-    <audio id="audio" preload="auto">
+  </audio>
+  <audio id="audio" preload="auto">
     <source src="https://cdn.glitch.global/c9c73aab-9068-4ce2-bf4b-7b548ee5ac04/click.mp3?v=1696872032277" type="audio/mpeg">
-</audio>
-
- 
-  
+  </audio>
 </head>
-  <body>
-  
+<body>
 
-  <h1>
-    
-    
-  <div class="container-fluid d-flex align-items-center justify-content-center min-vh-100">
-    <div class="container">
-      <main>
-        <h6 class="text-center">MQTT Led's &#x1F4A1; Control</h6>
-        <h6>Welcome, <%= username %>!</h6>
-          <label class="d-flex align-items-center justify-content-center">
-          <input id="toggleSwitch" class="l" type="checkbox">
-          <span class="slider"></span>
-        </label>
-        <h6 class="text-center">
-          <div id="appStatus">Switch Status: off</div>
-          <!-- Button to reinitialize voice recognition -->
-    <button id="startVoiceRecognition">Start Voice Recognition</button>
-        </h6>
-          <h6> <a class="btn btn-sm btn-history" href="/historic-data">View History</a>
-        </h6>
-         <form action="/logout" method="post">
-  <button class="btn btn-sm btn-custom" type="submit">Logout</button>
-</form>
-</h1>
-      </main>
-   
-  
-    <!-- Chatbot button -->
-    <button id="chatbot-button" onclick="toggleChatbot()">&#x1f916;</button>
-    
+<div class="container-fluid d-flex align-items-center justify-content-center min-vh-100">
+  <div class="container">
+    <main>
+      <h1 class="text-center">MQTT LED Control</h1>
+      <h6 class="text-center">Welcome, <%= username %>!</h6>
+      <label class="d-flex align-items-center justify-content-center">
+        <input id="toggleSwitch" class="l" type="checkbox">
+        <span class="slider"></span>
+      </label>
+      <h6 id="appStatus">Switch Status: off</h6>
+      <!-- Button to reinitialize voice recognition -->
+      <button id="startVoiceRecognition" class="btn btn-sm btn-secondary">Start Voice Recognition</button>
+      <div class="btn-group d-flex justify-content-center">
+        <a class="btn btn-sm btn-history" href="/historic-data">View History</a>
+        <form action="/logout" method="post">
+          <button class="btn btn-sm btn-custom" type="submit">Logout</button>
+        </form>
+      </div>
+    </main>
+  </div>
+</div>
 
-    <!-- Chatbot popup -->
-    <div id="chatbot-popup">
-        <div id="close-button" onclick="toggleChatbot()">✖</div>
-        <div id="chat-display"></div>
-        <div id="voice-output"></div>
-        <input type="text" id="user-input" placeholder="Type a message..." onkeydown="sendMessage(event)">
-        <button id="submit-button" onclick="sendMessage()">Submit</button>
-        <button id="voice-button" onclick="startVoiceRecognition()">&#128264;</button>
-    </div>
-       </div>
-    </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
-  <script src="script.js"></script>
-    <script src="botscript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

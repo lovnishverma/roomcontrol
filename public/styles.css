@@ -1,122 +1,118 @@
 *, *:before, *:after {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* :root {
-	font-size: calc(45px + (80 - 64) * (100vw - 320px)/(960 - 320));
-} */
+body {
+  background: #bbb;
+}
 
-/* Custom CSS */
+/* Custom Button Styles */
 .btn-custom {
   background-color: red;
   color: yellow;
   border-color: red;
-  padding: 0.1rem 0.2rem;
-  font-size: 0.300rem; /* Adjust font size as needed */
+  padding: 0.3rem 0.5rem;
 }
-/* Custom CSS */
+
 .btn-history {
   background-color: green;
   color: yellow;
   border-color: green;
-  padding: 0.20rem 0.3rem;
-  font-size: 0.400rem; /* Adjust font size as needed */
+  padding: 0.3rem 0.5rem;
 }
 
-
-h6 {
-	font-size: 0.5em;
-  line-height: 1.5; }
-  input {
-	font-size: 1em;
-	line-height: 1.5;
-}
-
-body {
-	background: #bbb;
-}
-
-input {
-	display: block;
-	margin-bottom: 1.5em;
-}
-
-main {
-	padding: 1.5em 0 0 0;
-	text-align: center;	
-}
-
+/* Toggle Switch Styles */
 .l {
-	background-color: rgba(0,0,0,0.7);
-	border-radius: 0.75em;
-	box-shadow: 0.125em 0.125em 0 0.125em rgba(0,0,0,0.3) inset;
-	color: #fdea7b;
-	display: inline-flex;
-	align-items: center;
-	margin: auto;
-	padding: 0.15em;
-	width: 3em;
-	height: 1.5em;
-	transition: background-color 0.1s 0.3s ease-out, box-shadow 0.1s 0.3s ease-out;
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 0.75em;
+  box-shadow: 0.125em 0.125em 0 0.125em rgba(0, 0, 0, 0.3) inset;
+  color: #fdea7b;
+  display: inline-flex;
+  align-items: center;
+  margin: auto;
+  padding: 0.15em;
+  width: 3em;
+  height: 1.5em;
+  transition: background-color 0.1s 0.3s ease-out, box-shadow 0.1s 0.3s ease-out;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .l:before, .l:after {
-	content: "";
-	display: block;
+  content: "";
+  display: block;
 }
 
 .l:before {
-	background-color: #d7d7d7;
-	border-radius: 50%;
-	width: 1.2em;
-	height: 1.2em;
-	transition: background-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
-	z-index: 1;
+  background-color: #d7d7d7;
+  border-radius: 50%;
+  width: 1.2em;
+  height: 1.2em;
+  transition: background-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
+  z-index: 1;
 }
 
 .l:after {
-	background:
-		linear-gradient(transparent 50%, rgba(0,0,0,0.15) 0) 0 50% / 50% 100%,
-		repeating-linear-gradient(90deg,#bbb 0,#bbb,#bbb 20%,#999 20%,#999 40%) 0 50% / 50% 100%,
-		radial-gradient(circle at 50% 50%,#888 25%, transparent 26%);
-	background-repeat: no-repeat;
-	border: 0.25em solid transparent;
-	border-left: 0.4em solid #d8d8d8;
-	border-right: 0 solid transparent;
-	transition: border-left-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
-	transform: translateX(-22.5%);
-	transform-origin: 25% 50%;
-	width: 1.2em;
-	height: 1em;
+  background:
+    linear-gradient(transparent 50%, rgba(0, 0, 0, 0.15) 0) 0 50% / 50% 100%,
+    repeating-linear-gradient(90deg, #bbb 0, #bbb, #bbb 20%, #999 20%, #999 40%) 0 50% / 50% 100%,
+    radial-gradient(circle at 50% 50%, #888 25%, transparent 26%);
+  background-repeat: no-repeat;
+  border: 0.25em solid transparent;
+  border-left: 0.4em solid #d8d8d8;
+  border-right: 0 solid transparent;
+  transition: border-left-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
+  transform: translateX(-22.5%);
+  transform-origin: 25% 50%;
+  width: 1.2em;
+  height: 1em;
 }
 
-/* Checked */
+/* Checked State */
 .l:checked {
-	background-color: rgba(0,0,0,0.45);
-	box-shadow: 0.125em 0.125em 0 0.125em rgba(0,0,0,0.1) inset;
+  background-color: rgba(0, 0, 0, 0.45);
+  box-shadow: 0.125em 0.125em 0 0.125em rgba(0, 0, 0, 0.1) inset;
 }
 
 .l:checked:before {
-	background-color: currentColor;
-	transform: translateX(125%);
+  background-color: currentColor;
+  transform: translateX(125%);
 }
 
 .l:checked:after {
-	border-left-color: currentColor;
-	transform: translateX(-2.5%) rotateY(180deg);
+  border-left-color: currentColor;
+  transform: translateX(-2.5%) rotateY(180deg);
 }
 
-/* Unchecked (Off) */
+/* Unchecked State */
 .l:not(:checked) {
-	background-color: black;
+  background-color: black;
 }
 
-/* Other States */
+/* Focus State */
 .l:focus {
-	outline: 0;
+  outline: 0;
+}
+
+/* Text Styles */
+h1 {
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+h6 {
+  font-size: 1em;
+  margin-bottom: 0.5em;
+}
+
+input {
+  font-size: 1em;
+}
+
+main {
+  padding: 1.5em 0;
+  text-align: center;  
 }
