@@ -80,12 +80,16 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
-    const { command, username } = JSON.parse(message.toString()); // Parse message payload
+    const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    if (command === '1') {
+    // Retrieve the username associated with the socket that sent the message
+    const socketId = clientSocketMap[topic];
+    const username = socketUserMap[socketId] || loggedInUsername;
+
+    if (receivedCommand === '1') {
       appStatus = 'on';
     } else {
       appStatus = 'off';
@@ -94,17 +98,18 @@ client.on('message', (topic, message) => {
     // Insert data into the SQLite database
     db.run(
       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-      [formattedDate, formattedTime, command, appStatus, username],
+      [formattedDate, formattedTime, receivedCommand, appStatus, username],
       (err) => {
         if (err) {
           console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
+
           // Emit newEntry event to connected clients
           io.emit('newEntry', {
             date: formattedDate,
             time: formattedTime,
-            command: command,
+            command: receivedCommand,
             status: appStatus,
             username: username,
           });
@@ -116,20 +121,19 @@ client.on('message', (topic, message) => {
   }
 });
 
+// Schedule to turn on the switch at 6:00 PM every day
+cron.schedule('0 18 * * *', () => {
+  const command = '1'; // Turn on command
+  client.publish(mqttTopic, command, { qos });
+  console.log('Scheduled task: Turn on the switch');
+});
 
-// // Schedule to turn on the switch at 6:00 PM every day
-// cron.schedule('0 18 * * *', () => {
-//   const command = '1'; // Turn on command
-//   client.publish(mqttTopic, command, { qos });
-//   console.log('Scheduled task: Turn on the switch');
-// });
-
-// // Schedule to turn off the switch at 7:00 AM every day
-// cron.schedule('0 7 * * *', () => {
-//   const command = '0'; // Turn off command
-//   client.publish(mqttTopic, command, { qos });
-//   console.log('Scheduled task: Turn off the switch');
-// });
+// Schedule to turn off the switch at 7:00 AM every day
+cron.schedule('0 7 * * *', () => {
+  const command = '0'; // Turn off command
+  client.publish(mqttTopic, command, { qos });
+  console.log('Scheduled task: Turn off the switch');
+});
 
 // Middleware to check if user is logged in
 
@@ -143,9 +147,7 @@ const isLoggedIn = (req, res, next) => {
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
-  const username = req.session.loggedInUser; // Retrieve username from session
-  const message = { command, username }; // Include username in the message payload
-  client.publish(mqttTopic, JSON.stringify(message), { qos });
+  client.publish(mqttTopic, command.toString(), { qos });
 
   if (command === '1') {
     appStatus = 'on';
@@ -155,7 +157,6 @@ app.post('/send-command', (req, res) => {
 
   res.send(`Command sent: ${command}`);
 });
-
 
 app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
@@ -322,8 +323,8 @@ app.get('/toggle-app', (req, res) => {
     res.status(400).send('Invalid state parameter');
   }
 });
-// To turn the app on: https://mqttnodejs.glitch.me/toggle-app?state=on
-// To turn the app off: https://mqttnodejs.glitch.me/toggle-app?state=off
+// To turn the app on: https://mqttnodejs2.glitch.me/toggle-app?state=on
+// To turn the app off: https://mqttnodejs2.glitch.me/toggle-app?state=off
 
 
 
@@ -339,7 +340,7 @@ const responses = [
     { pattern: /how are you/i, response: 'I am just a chatbot, but I\'m here to assist you!' },
     { pattern: /joke/i, response: 'Why did the scarecrow win an award? Because he was outstanding in his field!' },
     { pattern: /(my name is|I am) (.*)/i, response: 'Nice to meet you, $2!' },
-    { pattern: /What is the address of the home?|address/i, response: 'Address is: Bag Salana, Karsog,Phone:- 8894869371' },
+    { pattern: /What is the communication address of the NIELIT HQ?|nielit address/i, response: 'Address to contact NIELIT is: NIELIT Bhawan, Plot No. 3, PSP Pocket, Sector-8, Dwarka, New Delhi-110077, Helpline No. (Toll Free) - 1800116511 Phone:- 91-11-2530 8300 with 29 lines Email:- contact@nielit.gov.in' },
     { pattern: /help/i, response: 'I can help you turn on/off switches remotely. Just tell me which switch you want to control.' },
     { pattern: /security/i, response: 'Your security is our priority. How can I assist you with security measures?' },
     { pattern: /goodbye|bye|exit/i, response: 'Goodbye! If you need assistance, feel free to come back.' },
@@ -366,6 +367,7 @@ function handleUserMessage(userMessage) {
 // ...
 
 // API endpoint for chat with action handling
+// API endpoint for chat with action handling
 app.post('/api/chat', (req, res) => {
     const userMessage = req.body.userMessage;
     const { response, action } = handleUserMessage(userMessage);
@@ -374,33 +376,20 @@ app.post('/api/chat', (req, res) => {
     if (action === 'turnOnLights') {
         // Add logic to turn on lights (e.g., publish MQTT command)
         const command = '1';
-        client.publish(mqttTopic, command, { qos }, (err) => {
-            if (err) {
-                console.error('Error publishing MQTT command:', err);
-                res.status(500).json({ error: 'An error occurred while publishing MQTT command' });
-            } else {
-                io.emit('statusUpdate', 'on'); // Update status immediately for actions
-                res.json({ response }); // Respond after successfully publishing MQTT command
-            }
-        });
+        client.publish(mqttTopic, command, { qos });
+        io.emit('statusUpdate', 'on'); // Update status immediately for actions
+        res.json({ response }); // Respond immediately for actions without checking status
     } else if (action === 'turnOffLights') {
         // Add logic to turn off lights (e.g., publish MQTT command)
         const command = '0';
-        client.publish(mqttTopic, command, { qos }, (err) => {
-            if (err) {
-                console.error('Error publishing MQTT command:', err);
-                res.status(500).json({ error: 'An error occurred while publishing MQTT command' });
-            } else {
-                io.emit('statusUpdate', 'off'); // Update status immediately for actions
-                res.json({ response }); // Respond after successfully publishing MQTT command
-            }
-        });
+        client.publish(mqttTopic, command, { qos });
+        io.emit('statusUpdate', 'off'); // Update status immediately for actions
+        res.json({ response }); // Respond immediately for actions without checking status
     } else {
         // No specific action, respond with the general message
         res.json({ response });
     }
 });
-
 
 
 // ...
