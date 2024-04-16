@@ -339,7 +339,7 @@ const responses = [
     { pattern: /how are you/i, response: 'I am just a chatbot, but I\'m here to assist you!' },
     { pattern: /joke/i, response: 'Why did the scarecrow win an award? Because he was outstanding in his field!' },
     { pattern: /(my name is|I am) (.*)/i, response: 'Nice to meet you, $2!' },
-    { pattern: /What is the address of the home?|address/i, response: 'Address is: Bag Salana, Karsog,Phone:- 91-11-2530 8300 with 29 lines Email:- contact@nielit.gov.in' },
+    { pattern: /What is the address of the home?|address/i, response: 'Address is: Bag Salana, Karsog,Phone:- 8894869371' },
     { pattern: /help/i, response: 'I can help you turn on/off switches remotely. Just tell me which switch you want to control.' },
     { pattern: /security/i, response: 'Your security is our priority. How can I assist you with security measures?' },
     { pattern: /goodbye|bye|exit/i, response: 'Goodbye! If you need assistance, feel free to come back.' },
@@ -366,7 +366,6 @@ function handleUserMessage(userMessage) {
 // ...
 
 // API endpoint for chat with action handling
-// API endpoint for chat with action handling
 app.post('/api/chat', (req, res) => {
     const userMessage = req.body.userMessage;
     const { response, action } = handleUserMessage(userMessage);
@@ -375,15 +374,27 @@ app.post('/api/chat', (req, res) => {
     if (action === 'turnOnLights') {
         // Add logic to turn on lights (e.g., publish MQTT command)
         const command = '1';
-        client.publish(mqttTopic, command, { qos });
-        io.emit('statusUpdate', 'on'); // Update status immediately for actions
-        res.json({ response }); // Respond immediately for actions without checking status
+        client.publish(mqttTopic, command, { qos }, (err) => {
+            if (err) {
+                console.error('Error publishing MQTT command:', err);
+                res.status(500).json({ error: 'An error occurred while publishing MQTT command' });
+            } else {
+                io.emit('statusUpdate', 'on'); // Update status immediately for actions
+                res.json({ response }); // Respond after successfully publishing MQTT command
+            }
+        });
     } else if (action === 'turnOffLights') {
         // Add logic to turn off lights (e.g., publish MQTT command)
         const command = '0';
-        client.publish(mqttTopic, command, { qos });
-        io.emit('statusUpdate', 'off'); // Update status immediately for actions
-        res.json({ response }); // Respond immediately for actions without checking status
+        client.publish(mqttTopic, command, { qos }, (err) => {
+            if (err) {
+                console.error('Error publishing MQTT command:', err);
+                res.status(500).json({ error: 'An error occurred while publishing MQTT command' });
+            } else {
+                io.emit('statusUpdate', 'off'); // Update status immediately for actions
+                res.json({ response }); // Respond after successfully publishing MQTT command
+            }
+        });
     } else {
         // No specific action, respond with the general message
         res.json({ response });
