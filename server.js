@@ -121,58 +121,19 @@ client.on('message', (topic, message) => {
   }
 });
 
-// client.on('message', (topic, message) => {
-//   if (topic === mqttTopic) {
-//     const { command, username } = JSON.parse(message.toString()); // Parse message payload
-//     const currentDate = moment().tz('Asia/Kolkata');
-//     const formattedDate = currentDate.format('YYYY-MM-DD');
-//     const formattedTime = currentDate.format('hh:mm:ss A');
+// Schedule to turn on the switch at 6:00 PM every day
+cron.schedule('0 18 * * *', () => {
+  const command = '1'; // Turn on command
+  client.publish(mqttTopic, command, { qos });
+  console.log('Scheduled task: Turn on the switch');
+});
 
-//     if (command === '1') {
-//       appStatus = 'on';
-//     } else {
-//       appStatus = 'off';
-//     }
-
-//     // Insert data into the SQLite database
-//     db.run(
-//       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-//       [formattedDate, formattedTime, command, appStatus, username],
-//       (err) => {
-//         if (err) {
-//           console.error('Error inserting data into database:', err.message);
-//         } else {
-//           console.log('Data has been inserted into the database');
-//           // Emit newEntry event to connected clients
-//           io.emit('newEntry', {
-//             date: formattedDate,
-//             time: formattedTime,
-//             command: command,
-//             status: appStatus,
-//             username: username,
-//           });
-//         }
-//       }
-//     );
-
-//     io.emit('statusUpdate', appStatus);
-//   }
-// });
-
-
-// // Schedule to turn on the switch at 6:00 PM every day
-// cron.schedule('0 18 * * *', () => {
-//   const command = '1'; // Turn on command
-//   client.publish(mqttTopic, command, { qos });
-//   console.log('Scheduled task: Turn on the switch');
-// });
-
-// // Schedule to turn off the switch at 7:00 AM every day
-// cron.schedule('0 7 * * *', () => {
-//   const command = '0'; // Turn off command
-//   client.publish(mqttTopic, command, { qos });
-//   console.log('Scheduled task: Turn off the switch');
-// });
+// Schedule to turn off the switch at 7:00 AM every day
+cron.schedule('0 7 * * *', () => {
+  const command = '0'; // Turn off command
+  client.publish(mqttTopic, command, { qos });
+  console.log('Scheduled task: Turn off the switch');
+});
 
 // Middleware to check if user is logged in
 
@@ -186,9 +147,7 @@ const isLoggedIn = (req, res, next) => {
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
-  const username = req.session.loggedInUser; // Retrieve username from session
-  const message = { command, username }; // Include username in the message payload
-  client.publish(mqttTopic, JSON.stringify(message), { qos });
+  client.publish(mqttTopic, command.toString(), { qos });
 
   if (command === '1') {
     appStatus = 'on';
@@ -364,8 +323,8 @@ app.get('/toggle-app', (req, res) => {
     res.status(400).send('Invalid state parameter');
   }
 });
-// To turn the app on: https://mqttnodejs.glitch.me/toggle-app?state=on
-// To turn the app off: https://mqttnodejs.glitch.me/toggle-app?state=off
+// To turn the app on: https://mqttnodejs2.glitch.me/toggle-app?state=on
+// To turn the app off: https://mqttnodejs2.glitch.me/toggle-app?state=off
 
 
 
@@ -438,3 +397,4 @@ app.post('/api/chat', (req, res) => {
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 }); 
+
