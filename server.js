@@ -80,19 +80,19 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
-    console.log('Received MQTT message:', message.toString());
     const { command, username } = JSON.parse(message.toString()); // Parse message payload
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    if (command === '1') {
+    // Update app status based on the received command only if it's different from the current status
+    if (command === '1' && appStatus !== 'on') {
       appStatus = 'on';
-    } else {
+    } else if (command === '0' && appStatus !== 'off') {
       appStatus = 'off';
     }
 
-    // Insert data into the SQLite database
+    // Insert data into the SQLite database with the correct status
     db.run(
       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
       [formattedDate, formattedTime, command, appStatus, username],
@@ -113,24 +113,23 @@ client.on('message', (topic, message) => {
       }
     );
 
-    io.emit('statusUpdate', appStatus);
+    io.emit('statusUpdate', appStatus); // Update status for all clients
   }
 });
 
+// // Schedule to turn on the switch at 6:00 PM every day
+// cron.schedule('0 18 * * *', () => {
+//   const command = '1'; // Turn on command
+//   client.publish(mqttTopic, command, { qos });
+//   console.log('Scheduled task: Turn on the switch');
+// });
 
-// Schedule to turn on the switch at 6:00 PM every day
-cron.schedule('0 18 * * *', () => {
-  const command = '1'; // Turn on command
-  client.publish(mqttTopic, command, { qos });
-  console.log('Scheduled task: Turn on the switch');
-});
-
-// Schedule to turn off the switch at 7:00 AM every day
-cron.schedule('0 7 * * *', () => {
-  const command = '0'; // Turn off command
-  client.publish(mqttTopic, command, { qos });
-  console.log('Scheduled task: Turn off the switch');
-});
+// // Schedule to turn off the switch at 7:00 AM every day
+// cron.schedule('0 7 * * *', () => {
+//   const command = '0'; // Turn off command
+//   client.publish(mqttTopic, command, { qos });
+//   console.log('Scheduled task: Turn off the switch');
+// });
 
 // Middleware to check if user is logged in
 
@@ -311,12 +310,14 @@ app.post('/logout', (req, res) => {
 });
 
 // Other routes
-app.get('/toggle-app', (req, res) => {
+// Other routes
+app.get('/toggle-app', isLoggedIn, (req, res) => {
   const state = req.query.state; // Get the 'state' parameter from the URL
+  const username = req.session.loggedInUser; // Retrieve username from session
 
   if (state === 'on' || state === 'off') {
-    // Create JSON payload with the command field
-    const message = JSON.stringify({ command: state });
+    // Create JSON payload with the command and username fields
+    const message = JSON.stringify({ command: state, username });
 
     // Publish the MQTT command with the JSON payload
     client.publish(mqttTopic, message, { qos });
@@ -325,6 +326,7 @@ app.get('/toggle-app', (req, res) => {
     res.status(400).send('Invalid state parameter');
   }
 });
+
 
 
 // To turn the app on: https://mqttnodejs.glitch.me/toggle-app?state=on
