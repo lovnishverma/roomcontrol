@@ -322,8 +322,8 @@ app.get('/toggle-app', (req, res) => {
     res.status(400).send('Invalid state parameter');
   }
 });
-// To turn the app on: https://mqttnodejs2.glitch.me/toggle-app?state=on
-// To turn the app off: https://mqttnodejs2.glitch.me/toggle-app?state=off
+// To turn the app on: https://mqttnodejs.glitch.me/toggle-app?state=on
+// To turn the app off: https://mqttnodejs.glitch.me/toggle-app?state=off
 
 
 
