@@ -86,9 +86,9 @@ client.on('message', (topic, message) => {
     const formattedTime = currentDate.format('hh:mm:ss A');
 
     // Update app status based on the received command only if it's different from the current status
-    if (command === '1' && appStatus !== 'on') {
+    if (command === 'on' && appStatus !== 'on') { // Adjusted condition
       appStatus = 'on';
-    } else if (command === '0' && appStatus !== 'off') {
+    } else if (command === 'off' && appStatus !== 'off') { // Adjusted condition
       appStatus = 'off';
     }
 
@@ -113,9 +113,12 @@ client.on('message', (topic, message) => {
       }
     );
 
-    io.emit('statusUpdate', appStatus); // Update status for all clients
+    // Emit the updated status to all connected clients
+    io.emit('statusUpdate', appStatus);
   }
 });
+
+
 
 // // Schedule to turn on the switch at 6:00 PM every day
 // cron.schedule('0 18 * * *', () => {
