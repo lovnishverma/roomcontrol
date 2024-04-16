@@ -80,16 +80,12 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
-    const receivedCommand = message.toString();
+    const { command, username } = JSON.parse(message.toString()); // Parse message payload
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    // Retrieve the username associated with the socket that sent the message
-    const socketId = clientSocketMap[topic];
-    const username = socketUserMap[socketId] || loggedInUsername;
-
-    if (receivedCommand === '1') {
+    if (command === '1') {
       appStatus = 'on';
     } else {
       appStatus = 'off';
@@ -98,18 +94,17 @@ client.on('message', (topic, message) => {
     // Insert data into the SQLite database
     db.run(
       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-      [formattedDate, formattedTime, receivedCommand, appStatus, username],
+      [formattedDate, formattedTime, command, appStatus, username],
       (err) => {
         if (err) {
           console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
-
           // Emit newEntry event to connected clients
           io.emit('newEntry', {
             date: formattedDate,
             time: formattedTime,
-            command: receivedCommand,
+            command: command,
             status: appStatus,
             username: username,
           });
@@ -121,19 +116,20 @@ client.on('message', (topic, message) => {
   }
 });
 
-// Schedule to turn on the switch at 6:00 PM every day
-cron.schedule('0 18 * * *', () => {
-  const command = '1'; // Turn on command
-  client.publish(mqttTopic, command, { qos });
-  console.log('Scheduled task: Turn on the switch');
-});
 
-// Schedule to turn off the switch at 7:00 AM every day
-cron.schedule('0 7 * * *', () => {
-  const command = '0'; // Turn off command
-  client.publish(mqttTopic, command, { qos });
-  console.log('Scheduled task: Turn off the switch');
-});
+// // Schedule to turn on the switch at 6:00 PM every day
+// cron.schedule('0 18 * * *', () => {
+//   const command = '1'; // Turn on command
+//   client.publish(mqttTopic, command, { qos });
+//   console.log('Scheduled task: Turn on the switch');
+// });
+
+// // Schedule to turn off the switch at 7:00 AM every day
+// cron.schedule('0 7 * * *', () => {
+//   const command = '0'; // Turn off command
+//   client.publish(mqttTopic, command, { qos });
+//   console.log('Scheduled task: Turn off the switch');
+// });
 
 // Middleware to check if user is logged in
 
@@ -147,7 +143,9 @@ const isLoggedIn = (req, res, next) => {
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
-  client.publish(mqttTopic, command.toString(), { qos });
+  const username = req.session.loggedInUser; // Retrieve username from session
+  const message = { command, username }; // Include username in the message payload
+  client.publish(mqttTopic, JSON.stringify(message), { qos });
 
   if (command === '1') {
     appStatus = 'on';
@@ -157,6 +155,7 @@ app.post('/send-command', (req, res) => {
 
   res.send(`Command sent: ${command}`);
 });
+
 
 app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
@@ -340,7 +339,7 @@ const responses = [
     { pattern: /how are you/i, response: 'I am just a chatbot, but I\'m here to assist you!' },
     { pattern: /joke/i, response: 'Why did the scarecrow win an award? Because he was outstanding in his field!' },
     { pattern: /(my name is|I am) (.*)/i, response: 'Nice to meet you, $2!' },
-    { pattern: /What is the communication address of the NIELIT HQ?|nielit address/i, response: 'Address to contact NIELIT is: NIELIT Bhawan, Plot No. 3, PSP Pocket, Sector-8, Dwarka, New Delhi-110077, Helpline No. (Toll Free) - 1800116511 Phone:- 91-11-2530 8300 with 29 lines Email:- contact@nielit.gov.in' },
+    { pattern: /What is the address of the home?|address/i, response: 'Address is: Bag Salana, Karsog,Phone:- 91-11-2530 8300 with 29 lines Email:- contact@nielit.gov.in' },
     { pattern: /help/i, response: 'I can help you turn on/off switches remotely. Just tell me which switch you want to control.' },
     { pattern: /security/i, response: 'Your security is our priority. How can I assist you with security measures?' },
     { pattern: /goodbye|bye|exit/i, response: 'Goodbye! If you need assistance, feel free to come back.' },
