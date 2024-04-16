@@ -147,7 +147,9 @@ const isLoggedIn = (req, res, next) => {
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
-  client.publish(mqttTopic, command.toString(), { qos });
+  const username = req.session.loggedInUser; // Retrieve username from session
+  const message = { command, username }; // Include username in the message payload
+  client.publish(mqttTopic, JSON.stringify(message), { qos });
 
   if (command === '1') {
     appStatus = 'on';
