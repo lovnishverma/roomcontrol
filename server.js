@@ -80,12 +80,15 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
-    const { command, username } = JSON.parse(message.toString()); // Parse message payload
+    const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    if (command === '1') {
+    // Retrieve the username from the session
+    const username = loggedInUsername;
+
+    if (receivedCommand === '1') {
       appStatus = 'on';
     } else {
       appStatus = 'off';
@@ -94,17 +97,18 @@ client.on('message', (topic, message) => {
     // Insert data into the SQLite database
     db.run(
       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-      [formattedDate, formattedTime, command, appStatus, username],
+      [formattedDate, formattedTime, receivedCommand, appStatus, username],
       (err) => {
         if (err) {
           console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
+
           // Emit newEntry event to connected clients
           io.emit('newEntry', {
             date: formattedDate,
             time: formattedTime,
-            command: command,
+            command: receivedCommand,
             status: appStatus,
             username: username,
           });
