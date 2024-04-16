@@ -332,8 +332,8 @@ app.get('/toggle-app', isLoggedIn, (req, res) => {
 
 
 
-// To turn the app on: https://mqttnodejs.glitch.me/toggle-app?state=on
-// To turn the app off: https://mqttnodejs.glitch.me/toggle-app?state=off
+// To turn the app on: https://roomcontrol.glitch.me/toggle-app?state=on
+// To turn the app off: https://roomcontrol.glitch.me/toggle-app?state=off
 
 
 
