@@ -85,8 +85,9 @@ client.on('message', (topic, message) => {
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    // Retrieve the username from the session
-    const username = loggedInUsername;
+    // Retrieve the username associated with the socket that sent the message
+    const socketId = clientSocketMap[topic];
+    const username = socketUserMap[socketId] || loggedInUsername;
 
     if (receivedCommand === '1') {
       appStatus = 'on';
@@ -121,18 +122,18 @@ client.on('message', (topic, message) => {
 });
 
 // Schedule to turn on the switch at 6:00 PM every day
-// cron.schedule('0 18 * * *', () => {
-//   const command = '1'; // Turn on command
-//   client.publish(mqttTopic, command, { qos });
-//   console.log('Scheduled task: Turn on the switch');
-// });
+cron.schedule('0 18 * * *', () => {
+  const command = '1'; // Turn on command
+  client.publish(mqttTopic, command, { qos });
+  console.log('Scheduled task: Turn on the switch');
+});
 
-// // Schedule to turn off the switch at 7:00 AM every day
-// cron.schedule('0 7 * * *', () => {
-//   const command = '0'; // Turn off command
-//   client.publish(mqttTopic, command, { qos });
-//   console.log('Scheduled task: Turn off the switch');
-// });
+// Schedule to turn off the switch at 7:00 AM every day
+cron.schedule('0 7 * * *', () => {
+  const command = '0'; // Turn off command
+  client.publish(mqttTopic, command, { qos });
+  console.log('Scheduled task: Turn off the switch');
+});
 
 // Middleware to check if user is logged in
 
@@ -146,9 +147,7 @@ const isLoggedIn = (req, res, next) => {
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
-  const username = req.session.loggedInUser; // Retrieve username from session
-  const message = { command, username }; // Include username in the message payload
-  client.publish(mqttTopic, JSON.stringify(message), { qos });
+  client.publish(mqttTopic, command.toString(), { qos });
 
   if (command === '1') {
     appStatus = 'on';
