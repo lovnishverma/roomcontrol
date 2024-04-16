@@ -311,17 +311,36 @@ app.post('/logout', (req, res) => {
 
 // Other routes
 app.get('/toggle-app', (req, res) => {
-  const state = req.query.state; // Get the 'state' parameter from the URL
+    const state = req.query.state; // Get the 'state' parameter from the URL
+    const username = req.query.username; // Get the 'username' parameter from the URL
 
-  if (state === 'on' || state === 'off') {
-    // Publish the MQTT command based on the 'state' parameter
-    const command = state === 'on' ? '1' : '0';
-    client.publish(mqttTopic, command, { qos });
-    res.send(`App turned ${state}`);
-  } else {
-    res.status(400).send('Invalid state parameter');
-  }
+    if (state === 'on' || state === 'off') {
+        // Publish the MQTT command based on the 'state' parameter
+        const command = state === 'on' ? '1' : '0';
+        client.publish(mqttTopic, command, { qos });
+
+        // Update database with username
+        const currentDate = moment().tz('Asia/Kolkata');
+        const formattedDate = currentDate.format('YYYY-MM-DD');
+        const formattedTime = currentDate.format('hh:mm:ss A');
+        db.run(
+            'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
+            [formattedDate, formattedTime, command, state, username],
+            (err) => {
+                if (err) {
+                    console.error('Error inserting data into database:', err.message);
+                } else {
+                    console.log('Data has been inserted into the database');
+                }
+            }
+        );
+
+        res.send(`App turned ${state}`);
+    } else {
+        res.status(400).send('Invalid state parameter');
+    }
 });
+
 // To turn the app on: https://mqttnodejs.glitch.me/toggle-app?state=on
 // To turn the app off: https://mqttnodejs.glitch.me/toggle-app?state=off
 

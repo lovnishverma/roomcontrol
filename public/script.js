@@ -99,15 +99,17 @@ const synth = window.speechSynthesis;
   recognition.onresult = function (event) {
     const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
     console.log('Voice input:', transcript);
+    // Retrieve username from session
+    const username = $('#loggedInUser').text().trim();
 
     if (transcript.includes('turn on') || transcript.includes('on')) {
-      toggleSwitch.checked = true;
-      toggleApp('on');
+        toggleSwitch.checked = true;
+        toggleApp('on', username); // Pass username to toggleApp function
     } else if (transcript.includes('turn off') || transcript.includes('off')) {
-      toggleSwitch.checked = false;
-      toggleApp('off');
+        toggleSwitch.checked = false;
+        toggleApp('off', username); // Pass username to toggleApp function
     } else if (transcript.includes('check status') || transcript.includes('app status') || transcript.includes('status')) {
-      checkStatus();
+        checkStatus();
     } else if (transcript.includes('developer')) {
       speak('इस ऐप ka डेवलपर Lovnish Verma है');
     } else if (transcript.includes('hello')) {
