@@ -80,16 +80,13 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
-    const receivedCommand = message.toString();
+    console.log('Received MQTT message:', message.toString());
+    const { command, username } = JSON.parse(message.toString()); // Parse message payload
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    // Retrieve the username associated with the socket that sent the message
-    const socketId = clientSocketMap[topic];
-    const username = socketUserMap[socketId] || loggedInUsername;
-
-    if (receivedCommand === '1') {
+    if (command === '1') {
       appStatus = 'on';
     } else {
       appStatus = 'off';
@@ -98,18 +95,17 @@ client.on('message', (topic, message) => {
     // Insert data into the SQLite database
     db.run(
       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-      [formattedDate, formattedTime, receivedCommand, appStatus, username],
+      [formattedDate, formattedTime, command, appStatus, username],
       (err) => {
         if (err) {
           console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
-
           // Emit newEntry event to connected clients
           io.emit('newEntry', {
             date: formattedDate,
             time: formattedTime,
-            command: receivedCommand,
+            command: command,
             status: appStatus,
             username: username,
           });
@@ -120,6 +116,7 @@ client.on('message', (topic, message) => {
     io.emit('statusUpdate', appStatus);
   }
 });
+
 
 // Schedule to turn on the switch at 6:00 PM every day
 cron.schedule('0 18 * * *', () => {
@@ -147,7 +144,9 @@ const isLoggedIn = (req, res, next) => {
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
-  client.publish(mqttTopic, command.toString(), { qos });
+  const username = req.session.loggedInUser; // Retrieve username from session
+  const message = { command, username }; // Include username in the message payload
+  client.publish(mqttTopic, JSON.stringify(message), { qos });
 
   if (command === '1') {
     appStatus = 'on';
@@ -157,6 +156,7 @@ app.post('/send-command', (req, res) => {
 
   res.send(`Command sent: ${command}`);
 });
+
 
 app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
@@ -315,16 +315,20 @@ app.get('/toggle-app', (req, res) => {
   const state = req.query.state; // Get the 'state' parameter from the URL
 
   if (state === 'on' || state === 'off') {
-    // Publish the MQTT command based on the 'state' parameter
-    const command = state === 'on' ? '1' : '0';
-    client.publish(mqttTopic, command, { qos });
+    // Create JSON payload with the command field
+    const message = JSON.stringify({ command: state });
+
+    // Publish the MQTT command with the JSON payload
+    client.publish(mqttTopic, message, { qos });
     res.send(`App turned ${state}`);
   } else {
     res.status(400).send('Invalid state parameter');
   }
 });
-// To turn the app on: https://mqttnodejs2.glitch.me/toggle-app?state=on
-// To turn the app off: https://mqttnodejs2.glitch.me/toggle-app?state=off
+
+
+// To turn the app on: https://mqttnodejs.glitch.me/toggle-app?state=on
+// To turn the app off: https://mqttnodejs.glitch.me/toggle-app?state=off
 
 
 
