@@ -80,32 +80,36 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
   if (topic === mqttTopic) {
-    const { command, username } = JSON.parse(message.toString()); // Parse message payload
+    const receivedCommand = message.toString();
     const currentDate = moment().tz('Asia/Kolkata');
     const formattedDate = currentDate.format('YYYY-MM-DD');
     const formattedTime = currentDate.format('hh:mm:ss A');
 
-    // Update app status based on the received command only if it's different from the current status
-    if (command === 'on' && appStatus !== 'on') { // Adjusted condition
+    // Retrieve the username associated with the socket that sent the message
+    const socketId = clientSocketMap[topic];
+    const username = socketUserMap[socketId] || loggedInUsername;
+
+    if (receivedCommand === '1') {
       appStatus = 'on';
-    } else if (command === 'off' && appStatus !== 'off') { // Adjusted condition
+    } else {
       appStatus = 'off';
     }
 
-    // Insert data into the SQLite database with the correct status
+    // Insert data into the SQLite database
     db.run(
       'INSERT INTO historic_data (date, time, command, status, username) VALUES (?, ?, ?, ?, ?)',
-      [formattedDate, formattedTime, command, appStatus, username],
+      [formattedDate, formattedTime, receivedCommand, appStatus, username],
       (err) => {
         if (err) {
           console.error('Error inserting data into database:', err.message);
         } else {
           console.log('Data has been inserted into the database');
+
           // Emit newEntry event to connected clients
           io.emit('newEntry', {
             date: formattedDate,
             time: formattedTime,
-            command: command,
+            command: receivedCommand,
             status: appStatus,
             username: username,
           });
@@ -113,26 +117,23 @@ client.on('message', (topic, message) => {
       }
     );
 
-    // Emit the updated status to all connected clients
     io.emit('statusUpdate', appStatus);
   }
 });
 
+// Schedule to turn on the switch at 6:00 PM every day
+cron.schedule('0 18 * * *', () => {
+  const command = '1'; // Turn on command
+  client.publish(mqttTopic, command, { qos });
+  console.log('Scheduled task: Turn on the switch');
+});
 
-
-// // Schedule to turn on the switch at 6:00 PM every day
-// cron.schedule('0 18 * * *', () => {
-//   const command = '1'; // Turn on command
-//   client.publish(mqttTopic, command, { qos });
-//   console.log('Scheduled task: Turn on the switch');
-// });
-
-// // Schedule to turn off the switch at 7:00 AM every day
-// cron.schedule('0 7 * * *', () => {
-//   const command = '0'; // Turn off command
-//   client.publish(mqttTopic, command, { qos });
-//   console.log('Scheduled task: Turn off the switch');
-// });
+// Schedule to turn off the switch at 7:00 AM every day
+cron.schedule('0 7 * * *', () => {
+  const command = '0'; // Turn off command
+  client.publish(mqttTopic, command, { qos });
+  console.log('Scheduled task: Turn off the switch');
+});
 
 // Middleware to check if user is logged in
 
@@ -146,9 +147,7 @@ const isLoggedIn = (req, res, next) => {
 
 app.post('/send-command', (req, res) => {
   const command = req.body.command;
-  const username = req.session.loggedInUser; // Retrieve username from session
-  const message = { command, username }; // Include username in the message payload
-  client.publish(mqttTopic, JSON.stringify(message), { qos });
+  client.publish(mqttTopic, command.toString(), { qos });
 
   if (command === '1') {
     appStatus = 'on';
@@ -158,7 +157,6 @@ app.post('/send-command', (req, res) => {
 
   res.send(`Command sent: ${command}`);
 });
-
 
 app.get('/app-status', (req, res) => {
   res.json({ status: appStatus });
@@ -313,25 +311,18 @@ app.post('/logout', (req, res) => {
 });
 
 // Other routes
-// Other routes
-app.get('/toggle-app', isLoggedIn, (req, res) => {
+app.get('/toggle-app', (req, res) => {
   const state = req.query.state; // Get the 'state' parameter from the URL
-  const username = req.session.loggedInUser; // Retrieve username from session
 
   if (state === 'on' || state === 'off') {
-    // Create JSON payload with the command and username fields
-    const message = JSON.stringify({ command: state, username });
-
-    // Publish the MQTT command with the JSON payload
-    client.publish(mqttTopic, message, { qos });
+    // Publish the MQTT command based on the 'state' parameter
+    const command = state === 'on' ? '1' : '0';
+    client.publish(mqttTopic, command, { qos });
     res.send(`App turned ${state}`);
   } else {
     res.status(400).send('Invalid state parameter');
   }
 });
-
-
-
 // To turn the app on: https://roomcontrol.glitch.me/toggle-app?state=on
 // To turn the app off: https://roomcontrol.glitch.me/toggle-app?state=off
 

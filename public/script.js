@@ -86,7 +86,7 @@ const synth = window.speechSynthesis;
   
   // Add a function to toggle the switch based on voice commands
   const toggleApp = (state) => {
-    const url = `https://mqttnodejs.glitch.me/toggle-app?state=${state}`;
+    const url = `https://roomcontrol.glitch.me/toggle-app?state=${state}`;
     fetch(url)
       .then(response => {
         if (!response.ok) {
@@ -147,7 +147,7 @@ const synth = window.speechSynthesis;
 
   // Function to check app status
   function checkStatus() {
-    fetch('https://mqttnodejs.glitch.me/app-status')
+    fetch('https://roomcontrol.glitch.me/app-status')
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
