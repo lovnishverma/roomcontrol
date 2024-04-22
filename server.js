@@ -9,8 +9,11 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const cron = require('node-cron');
+const cors = require('cors');
 
 const app = express();
+// Enable CORS for all routes
+app.use(cors());
 const port = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs'); // Set EJS as the view engine
