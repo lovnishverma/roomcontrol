@@ -118,7 +118,7 @@ const synth = window.speechSynthesis;
     } else if (transcript.includes('check status') || transcript.includes('app status') || transcript.includes('status')) {
       checkStatus();
     } else if (transcript.includes('developer')) {
-      speak('इस ऐप ka डेवलपर Lovnish Verma है');
+      speak('इस ऐप ka डेवलपर NIELIT ROPAR है');
     } else if (transcript.includes('hello')) {
       speak('हां भाई जी, बोलो?');
     } else if (transcript.includes('how are you') || transcript.includes('kya haal hai')) {
