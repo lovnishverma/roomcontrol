@@ -18,8 +18,14 @@
 <body>
 
 <div class="container-fluid d-flex align-items-center justify-content-center min-vh-100">
-  <div class="container">
+  <div class="container text-center">
     <main>
+      <!-- Logo Section -->
+      <img src="https://cdn.glitch.global/c674a098-1705-4f44-b528-2d5b8305b7de/download.jpg?v=1735886374407" 
+           alt="Logo" 
+           class="img-fluid mb-4" 
+           style="max-width: 150px;">
+
       <h1 class="text-center">NIELIT MQTT Control</h1>
       <h6 class="text-center">Welcome, <%= username %>!</h6>
       <div class="voice-recognition">
@@ -30,7 +36,9 @@
         <input id="toggleSwitch" class="l" type="checkbox">
         <span class="slider"></span>
       </label>
-     <center> <h6 id="appStatus">Switch Status: off</h6> </center>
+      <center> 
+        <h6 id="appStatus">Switch Status: off</h6> 
+      </center>
       <div class="btn-group d-flex justify-content-center">
         <a class="btn btn-lg btn-history" href="/historic-data">View History</a>
         <form action="/logout" method="post">
