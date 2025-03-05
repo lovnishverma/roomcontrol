@@ -3,6 +3,7 @@ dependencies:
   body-parser: 1.20.2
   connect-sqlite3: 0.9.13
   cors: 2.8.5
+  dotenv: 16.4.7
   ejs: 3.1.9
   express: 4.18.2
   express-session: 1.17.3
@@ -445,6 +446,12 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-UX6sGumvvqSaXgdKGUsgZWqcUyIXZ/vZTrlRT/iobiKhGL0zL4d3osHj3uqllWJK+i+sixDS/3COVEOFbupFyw==
+  /dotenv/16.4.7:
+    dev: false
+    engines:
+      node: '>=12'
+    resolution:
+      integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==
   /duplexify/4.1.2:
     dependencies:
       end-of-stream: 1.4.4
@@ -1707,6 +1714,7 @@ specifiers:
   body-parser: ^1.19.0
   connect-sqlite3: ^0.9.13
   cors: ^2.8.5
+  dotenv: ^16.4.7
   ejs: ^3.1.9
   express: ^4.17.1
   express-session: ^1.17.3

@@ -18,6 +18,7 @@
     "express-session": "^1.17.3",
     "connect-sqlite3": "^0.9.13",
     "node-cron": "^3.0.2",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7"
   }
 }

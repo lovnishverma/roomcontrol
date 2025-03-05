@@ -10,7 +10,7 @@ const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const cron = require('node-cron');
 const cors = require('cors');
-
+require('dotenv').config(); // Load environment variables from .env for security purposes
 const app = express();
 // Enable CORS for all routes
 app.use(cors());
@@ -20,18 +20,29 @@ app.set('view engine', 'ejs'); // Set EJS as the view engine
 
 
 
-const brokerUrl = 'mqtts://1b29169c90f24560b78dea233a792d18.s1.eu.hivemq.cloud';
+// Load MQTT credentials from environment variables
+const brokerUrl = process.env.MQTT_BROKER_URL;
 const mqttTopic = '212';
 const qos = 0;
 
-// HiveMQ requires authentication
 const options = {
-  username: 'nielit212',  // Replace with your HiveMQ Cloud username
-  password: 'iloveMqtt212',  // Replace with your HiveMQ Cloud password
-  rejectUnauthorized: false // Ignore self-signed certificate issues
+  username: process.env.MQTT_USERNAME,
+  password: process.env.MQTT_PASSWORD,
+  rejectUnauthorized: false
 };
 
 const client = mqtt.connect(brokerUrl, options);
+
+// Session configuration with secret from .env
+app.use(
+  session({
+    store: new SQLiteStore(),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
+  })
+);
 
 client.on('connect', () => {
   console.log('✅ Connected to HiveMQ Cloud MQTT broker');
@@ -197,27 +208,23 @@ app.get('/app-status', (req, res) => {
 const server = http.createServer(app);
 const io = socketIo(server);
 
-const socketUserMap = {}; // Initialize a map to store socket IDs and usernames
+
+const socketUserMap = {}; // Store socket ID -> username mapping
 
 io.on('connection', (socket) => {
   console.log('A client connected');
 
-  socket.on('toggleSwitch', (data) => {
-    const { isChecked, username } = data;
-
-    // Store the username associated with the socket ID
+  socket.on('registerUser', (username) => {
     socketUserMap[socket.id] = username;
-
-    // Emit the toggleSwitch event to other connected clients
-    socket.broadcast.emit('toggleSwitch', { isChecked, username });
+    console.log(`Registered user: ${username} for socket ID: ${socket.id}`);
   });
 
   socket.on('disconnect', () => {
     console.log('A client disconnected');
-    // Remove the socket ID and username mapping when a client disconnects
     delete socketUserMap[socket.id];
   });
 });
+
 
 
 app.get('/historic-data', isLoggedIn, (req, res) => {
