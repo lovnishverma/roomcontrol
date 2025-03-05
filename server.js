@@ -18,11 +18,40 @@ const port = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs'); // Set EJS as the view engine
 
-const brokerUrl = 'mqtt://1b29169c90f24560b78dea233a792d18.s1.eu.hivemq.cloud';
+
+
+const brokerUrl = 'mqtts://1b29169c90f24560b78dea233a792d18.s1.eu.hivemq.cloud';
 const mqttTopic = '212';
 const qos = 0;
 
-const client = mqtt.connect(brokerUrl);
+// HiveMQ requires authentication
+const options = {
+  username: 'nielit212',  // Replace with your HiveMQ Cloud username
+  password: 'iloveMqtt212',  // Replace with your HiveMQ Cloud password
+  rejectUnauthorized: false // Ignore self-signed certificate issues
+};
+
+const client = mqtt.connect(brokerUrl, options);
+
+client.on('connect', () => {
+  console.log('✅ Connected to HiveMQ Cloud MQTT broker');
+  client.subscribe(mqttTopic, { qos }, (err) => {
+    if (err) {
+      console.error('🚨 Subscription error:', err.message);
+    } else {
+      console.log(`📡 Subscribed to topic: ${mqttTopic}`);
+    }
+  });
+});
+
+client.on('message', (topic, message) => {
+  console.log(`📩 Received message on topic "${topic}": ${message.toString()}`);
+});
+
+client.on('error', (err) => {
+  console.error('⚠️ MQTT Error:', err.message);
+});
+
 
 const clientSocketMap = {};
 
