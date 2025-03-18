@@ -1,6 +1,7 @@
 # Room Control System
 
 ## Overview
+Express.js application that interacts with MQTT for sending and receiving commands, stores historical data in a SQLite database, and communicates with clients using Socket.IO for real-time updates. No Refresh Web Sockets Dynamic Responsive Nodejs app built with NodeJS, MQTT, SQLLITE instantly up and Controling smart Home.
 The **Room Control System** is a web-based application designed to control the **solar lights** in **Room No. 212, NIELIT Chandigarh Ropar Campus**. It is built using **Express.js, MQTT, SQLite, WebSockets, and EJS** for rendering dynamic web pages. 
 The system is **hosted live at:** [Room Control](https://roomcontrol.glitch.me/).
 
@@ -85,8 +86,8 @@ This project is open-source under the **MIT License**.
 The project is based on the research paper **[IoT-Based Remote Control and Monitoring of Electrical Appliances](https://journal.nielit.edu.in/index.php/01/article/view/107)**.
 
 ## Contributors
-- **Lovnish Verma** (@lovnishVerma)
-- **Sarwan Singh**
+- **Lovnish Verma** [(@lovnishVerma)](https://github.com/lovnishVerma)
+- **Dr. Sarwan Singh** [(@sarwansingh)](https://github.com/sarwansingh)
 - **Jaskirat Singh**
 - **Digvir Singh**
 
