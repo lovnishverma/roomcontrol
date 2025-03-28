@@ -8,12 +8,12 @@
 const char* ssid = "YOUR WIFI SSID";
 const char* password = "YOUR WIFI PASSWORD";
 
-// HiveMQ Cloud Credentials
+// HiveMQ Cloud Credentials (Get it for free from HiveMQ)
 const char* mqttServer = "1b29169c90f24560b78deaxxxxxxxxxx.s1.eu.hivemq.cloud";
 const int mqttPort = 8883;  // Secure MQTT port
-const char* mqttUser = "nielxxxxx";
-const char* mqttPassword = "iloveMqxxxxx";
-const char* mqttTopic = "212";
+const char* mqttUser = "yourusernamexxxxx";
+const char* mqttPassword = "yourpasswordxxxx";
+const char* mqttTopic = "enteryourtopicname";
 const char* clientId = "ESP8266_Client";
 
 // Secure Wi-Fi Client
