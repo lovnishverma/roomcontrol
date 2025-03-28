@@ -1,98 +1,86 @@
-# Room Control System (Smart Home Control App)
+# Room Control System (Next-Gen Smart Home Automation)
 
-## Overview
-The **Room Control System** (Smart Home Control App) is a fully **open-source IoT-based web application** designed to **control and monitor electrical appliances in real-time**. Built using **MQTT, SQLite, WebSockets, and EJS**, it provides **seamless control, automation, and real-time feedback** via a web interface. Unlike proprietary smart home platforms, this system is designed to be low-cost, highly customizable, and independent of third-party services like Blynk IoT, Alexa, Google Home, or cloud-based automation tools.
+## 🚀 Overview
+The **Room Control System** is a **next-generation, open-source IoT-based automation platform** designed to **control and monitor electrical appliances in real-time**. Unlike traditional smart home systems, this solution is **cost-effective, cloud-independent, and fully customizable**—empowering users with **unparalleled control and security** over their smart environments. 
 
-With **secure user authentication**, **historical logging**, and **voice command support**, this system is ideal for **home automation, smart classrooms, research projects, and industrial control applications**. The lightweight architecture ensures it runs efficiently on **ESP8266-based IoT devices** while allowing easy integration with **local or cloud-based MQTT brokers**.
+Built on a **modern tech stack** leveraging **MQTT, WebSockets, SQLite, and Express.js**, this system delivers **seamless automation, real-time feedback, and AI-driven voice control** without requiring proprietary apps like Alexa, Google Home, or Blynk IoT.
 
-### 🔹 Current Deployment:
-- **MQTT Broker:** [HiveMQ Cloud](https://www.hivemq.com/)
-- **Frontend & Backend Hosting:** [Glitch](https://glitch.com/) (Node.js)
-- **Database:** SQLite
+### 🌍 Revolutionizing IoT Automation
+- **Completely Open-Source** – No hidden costs, full transparency, and complete control.
+- **Independent & Decentralized** – Runs **without cloud dependency** for ultimate privacy.
+- **AI-Enabled Voice Commands** – Issue commands directly using **built-in voice recognition**.
+- **Self-Hosting Options** – Run it on **Raspberry Pi, VPS, or personal servers**.
+- **Designed for Scalability** – Adaptable to **industrial automation, smart classrooms, and home automation**.
 
-Designed with **flexibility in mind**, the system can be **self-hosted** on a Raspberry Pi, personal server, or cloud platforms like **Glitch, Heroku, or AWS**, making it a scalable and future-proof solution for IoT automation. 🚀
+🔹 **Live Deployment:**  
+🌐 **[Room Control (Live Demo)](https://roomcontrol.glitch.me/login)**  
+📂 **[GitHub Repository](https://github.com/lovnishverma/roomcontrol)**  
 
----
+## 🔥 Key Features
+✅ **Real-Time Web Control** – Instant response via **WebSockets (Socket.IO)**.  
+✅ **MQTT-Based IoT Communication** – Ultra-secure and efficient messaging.  
+✅ **Historical Data Logging** – View **past actions, timestamps, and user activity**.  
+✅ **End-to-End Security** – **bcrypt password hashing, session-based authentication**.  
+✅ **AI-Powered Voice Control** – **No Alexa, No Google Home Needed!** Direct command execution.  
+✅ **Automated Scheduling** – Predefine ON/OFF times for smart appliances.  
+✅ **Mobile-Friendly UI** – Responsive and accessible from any device.  
+✅ **Offline & Local Hosting Support** – Functions **without an internet connection**.  
+✅ **Lightweight & Scalable** – Works on low-power devices like ESP8266 & ESP32.  
 
-[Live Demo](https://roomcontrol.glitch.me/login) | [GitHub Repository](https://github.com/lovnishverma/roomcontrol) 😊
+## 📌 Why This System is a Game-Changer
+| **Existing Systems** | **Room Control System** |
+|--------------------|-------------------|
+| Requires External Apps (Alexa, Google Home, Blynk IoT) | No additional apps needed – **browser-based** control |
+| Expensive Smart Hubs | Uses **affordable ESP8266/ESP32** modules |
+| Cloud Dependent | Works **offline or online** (self-hosted) |
+| Proprietary & Limited Customization | Fully **open-source** & highly customizable |
+| IoT Vendor Lock-In | **Decentralized & user-controlled** |
 
-## Features
-- **Real-time Control & Monitoring:** Toggle the relay switch remotely from anywhere over the Internet.
-- **Web-Based Dashboard:** Access historical control data through an intuitive web interface.
-- **MQTT Communication:** Secure communication with the ESP8266-based relay module.
-- **User Authentication:** Secure login for authorized control.
-- **Historical Logging:** Keeps a log of all switch actions with timestamps and usernames.
-- **Voice Control:** Supports direct voice commands (`ON`, `OFF`, `STATUS`) without needing Alexa or Google Assistant.
-- **Automated Scheduling:** Set predefined schedules for lights to turn ON/OFF automatically.
-- **Open-Source & Customizable:** Modify and extend functionalities as needed.
-- **Local Hosting Option:** Can function without cloud dependency.
+## 🛠️ Technologies Used
+- **Backend:** Express.js, SQLite, MQTT  
+- **Frontend:** EJS, Bootstrap  
+- **Communication Protocol:** WebSockets  
+- **Embedded:** ESP8266, HiveMQ Cloud MQTT  
+- **Security:** bcrypt, express-session  
 
-## Problems with Existing Systems
-- **Require External Apps:** Many existing smart home systems require users to install mobile applications.
-- **Expensive Smart Home Hubs:** Voice-controlled systems depend on costly devices like Alexa or Google Home.
-- **Proprietary Hardware Costs:** Many systems use expensive, proprietary components.
-- **Limited Customization:** Many commercial IoT solutions do not allow customization or modification.
-- **Cloud Dependency:** Many smart home systems stop working if cloud services go down.
-
-## Advantages of the Proposed System
-- **Web-Based Control:** No need for external apps; access control via a browser.
-- **No Alexa/Google Home Required:** Built-in voice command support without AI assistants.
-- **Affordable Hardware:** Uses an ESP8266 module, significantly reducing costs.
-- **Independent of Cloud Services:** Can be hosted locally for offline usage.
-- **Fully Open-Source:** Encourages contributions, modifications, and self-hosting.
-
-## Technologies Used
-- **Backend:** Express.js, SQLite, MQTT
-- **Frontend:** EJS, Bootstrap, WebSockets
-- **Embedded:** ESP8266, HiveMQ Cloud MQTT
-- **Security:** bcrypt for password hashing, express-session for authentication
-
-## Hardware Requirements
-- **ESP8266 NodeMCU Module**
-- **AC to DC Power Adapter**
-- **Relay Module**
-- **Buzzer**
-- **Jumper Wires**
-
-## Installation Guide
+## 🏗️ Installation Guide
 ### Prerequisites
 - Install **Node.js**
 - Set up **ESP8266** with [Arduino IDE](https://www.arduino.cc/en/software/)
 - Create an account with [HiveMQ Cloud MQTT](https://www.hivemq.com/)
 
-### 1. Clone the Repository
+### 1️⃣ Clone the Repository
 ```sh
 git clone https://github.com/lovnishverma/roomcontrol.git
 cd roomcontrol
 ```
 
-### 2. Install Dependencies
+### 2️⃣ Install Dependencies
 ```sh
 npm install
 ```
 
-### 3. Configure Environment Variables (MQTT credentials for HiveMQ Cloud can be found in the HiveMQ Console.)
-Create a `.env` file in the root directory and add:
+### 3️⃣ Configure Environment Variables
+Create a `.env` file and add:
 ```ini
-MQTT_BROKER_URL=mqtts://1b29169c90f24560b78deaxxxxxxxxxx.s1.eu.hivemq.cloud
-MQTT_USERNAME=nielxxxxx
-MQTT_PASSWORD=Mqxxxxxxxxx
-SESSION_SECRET=axxxx
+MQTT_BROKER_URL=mqtts://your-hivemq-url
+MQTT_USERNAME=your-username
+MQTT_PASSWORD=your-password
+SESSION_SECRET=your-secret-key
 ```
 
-### 4. Start the Server
+### 4️⃣ Start the Server
 ```sh
 npm start
 ```
-The server will start at `http://localhost:3000`.
+Server will run at `http://localhost:3000`.
 
-### 5. Deploying to a Live Server
-Deploy the system to platforms like:
+### 5️⃣ Deploying to a Live Server
 - [Glitch](https://glitch.com/)
 - [Heroku](https://www.heroku.com/)
 - [Vercel](https://vercel.com/)
 
-## ESP8266 Firmware Setup
+## ⚙️ ESP8266 Firmware Setup
 ### Wiring
 - **Relay Module:** GPIO 4 (D2)
 - **Buzzer:** GPIO 5 (D1)
@@ -107,44 +95,53 @@ const char* mqttUser = "your-mqtt-username";
 const char* mqttPassword = "your-mqtt-password";
 ```
 Upload the firmware using Arduino IDE.
-**Full Code:** [ESP8266 Firmware](https://github.com/lovnishverma/roomcontrol/blob/master/esp8266_code.ino)
 
-## API Endpoints
+🔹 **Full Code:** [ESP8266 Firmware](https://github.com/lovnishverma/roomcontrol/blob/master/esp8266_code.ino)
+
+## 🌐 API Endpoints
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/toggle-app?state=on` | GET | Turns the switch ON |
 | `/toggle-app?state=off` | GET | Turns the switch OFF |
-| `/app-status` | GET | Retrieves the switch status |
+| `/app-status` | GET | Retrieves switch status |
 | `/send-command` | POST | Sends command `{ command: '1' | '0' }` |
 | `/historic-data` | GET | Retrieves historical data |
 
-## WebSocket Events
+## 📡 WebSocket Events
 - **`newEntry`** → Broadcasts new historical data
-- **`statusUpdate`** → Sends real-time light status updates
+- **`statusUpdate`** → Sends real-time status updates
 
-## Contribution Guide
-We welcome contributions! To contribute:
+## 🔄 Future Enhancements
+🚀 **[Integration With Augmented Reality](https://github.com/lovnishverma/arjs-iot-control)** – Integrate **AR**.  
+🚀 **AI-Powered Automation** – Integrate **machine learning-based automation**.  
+🚀 **Advanced Security** – Implement **OAuth 2.0 & JWT authentication**.  
+🚀 **Multi-Device Synchronization** – Seamless control across multiple devices.  
+🚀 **Smart Energy Management** – AI-powered power consumption analysis.  
+🚀 **Native Mobile App (Flutter)** – Build an **offline-first PWA & mobile app**.  
+🚀 **Raspberry Pi Support** – Run locally on a **self-hosted local server**.  
+
+## 🎯 Contribution Guide
 1. Fork the repository.
 2. Create a new branch: `git checkout -b feature-xyz`
 3. Commit changes: `git commit -m "Add new feature"`
 4. Push to GitHub: `git push origin feature-xyz`
 5. Submit a pull request.
 
-## Deployment & Hosting
-The project is live at **[Room Control](https://roomcontrol.glitch.me/)**.
-- GitHub Repository: [Room Control](https://github.com/lovnishverma/roomcontrol)
-- Self-hosting options available for Raspberry Pi, VPS, or local servers.
+## 🔗 Deployment & Hosting
+📌 **Live Deployment:** [Room Control](https://roomcontrol.glitch.me/)  
+📂 **GitHub Repository:** [Room Control](https://github.com/lovnishverma/roomcontrol)  
+🔹 **Self-Hosting Options** – Raspberry Pi, VPS, or local servers.  
 
-## License
-This project is open-source under the **MIT License**. Feel free to use, modify, and distribute.
+## 📝 License
+This project is open-source under the **MIT License**. Feel free to **use, modify, and distribute**.
 
-## Research Paper
+## 📖 Research Paper
 This project is based on the research paper **[IoT-Based Remote Control and Monitoring of Electrical Appliances](https://journal.nielit.edu.in/index.php/01/article/view/107)**.
 
-## Contributors
+## 🤝 Contributors
 - **Lovnish Verma** [(@lovnishVerma)](https://github.com/lovnishVerma)
 - **Dr. Sarwan Singh** [(@sarwansingh)](https://github.com/sarwansingh)
 
-## Contact
+## 📬 Contact
 For any issues or queries, open an issue in the repository or contact: [princelv84@gmail.com](mailto:princelv84@gmail.com).
 
