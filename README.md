@@ -104,7 +104,7 @@ Upload the firmware using Arduino IDE.
 | `/toggle-app?state=on` | GET | Turns the switch ON |
 | `/toggle-app?state=off` | GET | Turns the switch OFF |
 | `/app-status` | GET | Retrieves switch status |
-| `/send-command` | POST | Sends `{ command: '1' | '0' }` |
+| `/send-command` | POST | Sends command `{ command: '1'  '0' }` |
 | `/historic-data` | GET | Retrieves historical data |
 
 ## 📡 WebSocket Events
@@ -112,7 +112,6 @@ Upload the firmware using Arduino IDE.
 - **`statusUpdate`** → Sends real-time status updates
 
 ## 🔄 Future Enhancements
-🚀 **[Integration With Augmented Reality](https://github.com/lovnishverma/arjs-iot-control)** – Integrate **AR**.  
 🚀 **AI-Powered Automation** – Integrate **machine learning-based automation**.  
 🚀 **Advanced Security** – Implement **OAuth 2.0 & JWT authentication**.  
 🚀 **Multi-Device Synchronization** – Seamless control across multiple devices.  
