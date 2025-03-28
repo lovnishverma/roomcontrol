@@ -1,9 +1,23 @@
 # Room Control System
 
 ## Overview
-The **Room Control System** is an open-source IoT-based web application designed to control and monitor electrical appliances in real time. It leverages **MQTT, SQLite, WebSockets, and EJS** to provide seamless control and automation. The system is designed to be low-cost, customizable, and independent of third-party smart home platforms like Alexa or Google Home.
+The **Room Control System** is a fully **open-source IoT-based web application** designed to **control and monitor electrical appliances in real time**. Built using **MQTT, SQLite, WebSockets, and EJS**, it provides **seamless control, automation, and real-time feedback** via a web interface. Unlike proprietary smart home platforms, this system is designed to be **low-cost, highly customizable, and free from third-party dependencies** such as Blynk IoT, Alexa, or Google Home.  
 
-[Live Demo](https://roomcontrol.glitch.me/login) | [GitHub Repository](https://github.com/lovnishverma/roomcontrol)
+With **secure user authentication**, **historical logging**, and **voice command support**, this system is ideal for **home automation, smart classrooms, research projects, and industrial control applications**. The lightweight architecture ensures it runs efficiently on **ESP8266-based IoT devices** while allowing easy integration with **local or cloud-based MQTT brokers**.  
+
+### 🔹 Current Deployment:
+- **MQTT Broker:** [HiveMQ Cloud](https://www.hivemq.com/)  
+- **Frontend & Backend Hosting:** [Glitch](https://glitch.com/) (Node.js)  
+- **Database:** SQLite  
+
+Designed with **flexibility in mind**, the system can be **self-hosted** on a Raspberry Pi, personal server, or cloud platforms like **Glitch, Heroku, or AWS**, making it a scalable and future-proof solution for IoT automation. 🚀  
+
+---
+
+[Live Demo](https://roomcontrol.glitch.me/login) | [GitHub Repository](https://github.com/lovnishverma/roomcontrol) 😊
+
+
+
 
 ## Features
 - **Real-time Control & Monitoring:** Users can toggle the relay switch remotely.
