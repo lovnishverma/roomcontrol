@@ -3,26 +3,26 @@
 ## Overview
 The **Room Control System** is a fully **open-source IoT-based web application** designed to **control and monitor electrical appliances in real time**. Built using **MQTT, SQLite, WebSockets, and EJS**, it provides **seamless control, automation, and real-time feedback** via a web interface. Unlike proprietary smart home platforms, this system is designed to be low-cost, highly customizable, and independent of third-party services such as Blynk IoT, voice assistants like Alexa and Google Home, or cloud-based automation tools.
 
-With **secure user authentication**, **historical logging**, and **voice command support**, this system is ideal for **home automation, smart classrooms, research projects, and industrial control applications**. The lightweight architecture ensures it runs efficiently on **ESP8266-based IoT devices** while allowing easy integration with **local or cloud-based MQTT brokers**.  
+With **secure user authentication**, **historical logging**, and **voice command support**, this system is ideal for **home automation, smart classrooms, research projects, and industrial control applications**. The lightweight architecture ensures it runs efficiently on **ESP8266-based IoT devices** while allowing easy integration with **local or cloud-based MQTT brokers**.
 
 ### 🔹 Current Deployment:
-- **MQTT Broker:** [HiveMQ Cloud](https://www.hivemq.com/)  
-- **Frontend & Backend Hosting:** [Glitch](https://glitch.com/) (Node.js)  
-- **Database:** SQLite  
+- **MQTT Broker:** [HiveMQ Cloud](https://www.hivemq.com/)
+- **Frontend & Backend Hosting:** [Glitch](https://glitch.com/) (Node.js)
+- **Database:** SQLite
 
-Designed with **flexibility in mind**, the system can be **self-hosted** on a Raspberry Pi, personal server, or cloud platforms like **Glitch, Heroku, or AWS**, making it a scalable and future-proof solution for IoT automation. 🚀  
+Designed with **flexibility in mind**, the system can be **self-hosted** on a Raspberry Pi, personal server, or cloud platforms like **Glitch, Heroku, or AWS**, making it a scalable and future-proof solution for IoT automation. 🚀
 
 ---
 
 [Live Demo](https://roomcontrol.glitch.me/login) | [GitHub Repository](https://github.com/lovnishverma/roomcontrol) 😊
 
 ## Features
-- **Real-time Control & Monitoring:** Users can toggle the relay switch remotely.
+- **Real-time Control & Monitoring:** Users can toggle the relay switch remotely from anywhere in the world over the Internet, regardless of the network.
 - **Web-Based Dashboard:** Access historical control data through an intuitive web interface.
 - **MQTT Communication:** Secure communication with the ESP8266-based relay module.
 - **User Authentication:** Secure login for authorized control.
 - **Historical Logging:** Keeps a log of all switch actions with timestamps and usernames.
-- **Voice Control:** Supports voice commands (`ON`, `OFF`, `STATUS`) without requiring external assistants.
+- **Voice Control:** Supports direct voice commands (`ON`, `OFF`, `STATUS`) without needing Alexa, Google Assistant, or other third-party voice assistants.
 - **Automated Scheduling:** Set predefined schedules for lights to turn ON/OFF automatically.
 - **Open-Source & Customizable:** Modify and extend functionalities as needed.
 - **Local Hosting Option:** Can function without cloud dependency.
@@ -107,8 +107,8 @@ const int mqttPort = 8883;
 const char* mqttUser = "your-mqtt-username";
 const char* mqttPassword = "your-mqtt-password";
 ```
-Upload the firmware using Arduino IDE. 
-FULL CODE:  [EMBEDDED C CODE TO BE UPLOADED IN ESP8266](https://github.com/lovnishverma/roomcontrol/blob/master/esp8266_code.ino)
+Upload the firmware using Arduino IDE.
+**Full Code:** [ESP8266 Firmware](https://github.com/lovnishverma/roomcontrol/blob/master/esp8266_code.ino)
 
 ## API Endpoints
 | Endpoint | Method | Description |
@@ -120,7 +120,7 @@ FULL CODE:  [EMBEDDED C CODE TO BE UPLOADED IN ESP8266](https://github.com/lovni
 | `/historic-data` | GET | Retrieves historical data |
 
 ## MQTT Communication
-The system subscribes to the MQTT topic **`212`** and processes messages as follows:
+The system listens to MQTT topic **`212`**, processing incoming messages as follows:
 - **Message `1`** → Light **ON**
 - **Message `0`** → Light **OFF**
 
@@ -138,7 +138,7 @@ We welcome contributions! To contribute:
 
 ## Deployment & Hosting
 The project is live at **[Room Control](https://roomcontrol.glitch.me/)**.
-- GitHub Repository: [arjs-iot-control](https://github.com/lovnishverma/arjs-iot-control)
+- GitHub Repository: [Room Control](https://github.com/lovnishverma/roomcontrol)
 - Self-hosting options available for Raspberry Pi, VPS, or local servers.
 
 ## License
