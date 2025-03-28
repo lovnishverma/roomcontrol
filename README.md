@@ -127,7 +127,8 @@ Upload the firmware using Arduino IDE.
 - **`statusUpdate`** → Sends real-time status updates
 
 ## 🔄 Future Enhancements
-🚀 **AR-Powered Automation** – Integrate **[Augmented Reality-based automation](https://github.com/lovnishverma/arjs-iot-control)**. 
+
+🚀 **AR-Powered Automation** – Integrate **[Augmented Reality-based automation](https://github.com/lovnishverma/arjs-iot-control)**.
 🚀 **AI-Powered Automation** – Integrate **machine learning-based automation**.  
 🚀 **Advanced Security** – Implement **OAuth 2.0 & JWT authentication**.  
 🚀 **Multi-Device Synchronization** – Seamless control across multiple devices.  
