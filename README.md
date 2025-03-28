@@ -129,6 +129,7 @@ Upload the firmware using Arduino IDE.
 ## 🔄 Future Enhancements
 
 🚀 **[AR-Powered Automation](https://github.com/lovnishverma/arjs-iot-control)** – Integrate **Augmented Reality-based automation**.
+
 🚀 **AI-Powered Automation** – Integrate **machine learning-based automation**.  
 🚀 **Advanced Security** – Implement **OAuth 2.0 & JWT authentication**.  
 🚀 **Multi-Device Synchronization** – Seamless control across multiple devices.  
