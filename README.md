@@ -16,6 +16,15 @@ Built on a **modern tech stack** leveraging **MQTT, WebSockets, SQLite, and Expr
 🌐 **[Room Control (Live Demo)](https://roomcontrol.glitch.me/login)**  
 📂 **[GitHub Repository](https://github.com/lovnishverma/roomcontrol)**  
 
+HOMEPAGE:
+![image](https://github.com/user-attachments/assets/de3e47d3-4a68-4458-bebc-0fa3dd9fcd90)
+
+VOICE CONTROL:
+
+![image](https://github.com/user-attachments/assets/523c4622-7c8d-4054-a5df-893767ab11d1)
+
+
+
 ## 🔥 Key Features
 ✅ **Real-Time Web Control** – Instant response via **WebSockets (Socket.IO)**.  
 ✅ **MQTT-Based IoT Communication** – Ultra-secure and efficient messaging.  
@@ -26,6 +35,9 @@ Built on a **modern tech stack** leveraging **MQTT, WebSockets, SQLite, and Expr
 ✅ **Mobile-Friendly UI** – Responsive and accessible from any device.  
 ✅ **Offline & Local Hosting Support** – Functions **without an internet connection**.  
 ✅ **Lightweight & Scalable** – Works on low-power devices like ESP8266 & ESP32.  
+
+![image](https://github.com/user-attachments/assets/40585baa-0148-4642-8f9f-1994a9a626e6)
+
 
 ## 📌 Why This System is a Game-Changer
 | **Existing Systems** | **Room Control System** |
