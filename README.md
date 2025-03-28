@@ -107,7 +107,8 @@ const int mqttPort = 8883;
 const char* mqttUser = "your-mqtt-username";
 const char* mqttPassword = "your-mqtt-password";
 ```
-Upload the firmware using Arduino IDE.
+Upload the firmware using Arduino IDE. 
+FULL CODE:  [EMBEDDED C CODE TO BE UPLOADED IN ESP8266](https://github.com/lovnishverma/roomcontrol/blob/master/esp8266_code.ino)
 
 ## API Endpoints
 | Endpoint | Method | Description |
