@@ -126,8 +126,6 @@ The project is based on the research paper **[IoT-Based Remote Control and Monit
 ## Contributors
 - **Lovnish Verma** [(@lovnishVerma)](https://github.com/lovnishVerma)
 - **Dr. Sarwan Singh** [(@sarwansingh)](https://github.com/sarwansingh)
-- **Jaskirat Singh**
-- **Digvir Singh**
 
 ## Contact
 For any issues, please open an issue in the repository or contact [princelv84@gmail.com](mailto:princelv84@gmail.com).
