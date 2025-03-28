@@ -104,7 +104,7 @@ Upload the firmware using Arduino IDE.
 | `/toggle-app?state=on` | GET | Turns the switch ON |
 | `/toggle-app?state=off` | GET | Turns the switch OFF |
 | `/app-status` | GET | Retrieves switch status |
-| `/send-command` | POST | Sends command `{ command: '1' | '0' }` |
+| `/send-command` | POST | Sends `{ command: '1' | '0' }` |
 | `/historic-data` | GET | Retrieves historical data |
 
 ## 📡 WebSocket Events
