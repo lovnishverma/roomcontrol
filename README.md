@@ -1,7 +1,7 @@
 # Room Control System
 
 ## Overview
-The **Room Control System** is a fully **open-source IoT-based web application** designed to **control and monitor electrical appliances in real time**. Built using **MQTT, SQLite, WebSockets, and EJS**, it provides **seamless control, automation, and real-time feedback** via a web interface. Unlike proprietary smart home platforms, this system is designed to be **low-cost, highly customizable, and free from third-party dependencies** such as Blynk IoT, Alexa, or Google Home.  
+The **Room Control System** is a fully **open-source IoT-based web application** designed to **control and monitor electrical appliances in real time**. Built using **MQTT, SQLite, WebSockets, and EJS**, it provides **seamless control, automation, and real-time feedback** via a web interface. Unlike proprietary smart home platforms, this system is designed to be low-cost, highly customizable, and independent of third-party services such as Blynk IoT, voice assistants like Alexa and Google Home, or cloud-based automation tools.
 
 With **secure user authentication**, **historical logging**, and **voice command support**, this system is ideal for **home automation, smart classrooms, research projects, and industrial control applications**. The lightweight architecture ensures it runs efficiently on **ESP8266-based IoT devices** while allowing easy integration with **local or cloud-based MQTT brokers**.  
 
