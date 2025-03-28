@@ -5,6 +5,11 @@ The **Room Control System** is a **next-generation, open-source IoT-based automa
 
 Built on a **modern tech stack** leveraging **MQTT, WebSockets, SQLite, and Express.js**, this system delivers **seamless automation, real-time feedback, and AI-driven voice control** without requiring proprietary apps like Alexa, Google Home, or Blynk IoT.
 
+<video width="500" controls>
+  <source src="ISSUE_TEMPLATE/project_demonstration.mp4" type="video/mp4">
+</video>
+
+
 ### 🌍 Revolutionizing IoT Automation
 - **Completely Open-Source** – No hidden costs, full transparency, and complete control.
 - **Independent & Decentralized** – Runs **without cloud dependency** for ultimate privacy.
