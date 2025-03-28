@@ -16,9 +16,6 @@ Designed with **flexibility in mind**, the system can be **self-hosted** on a Ra
 
 [Live Demo](https://roomcontrol.glitch.me/login) | [GitHub Repository](https://github.com/lovnishverma/roomcontrol) 😊
 
-
-
-
 ## Features
 - **Real-time Control & Monitoring:** Users can toggle the relay switch remotely.
 - **Web-Based Dashboard:** Access historical control data through an intuitive web interface.
@@ -155,3 +152,4 @@ This project is based on the research paper **[IoT-Based Remote Control and Moni
 
 ## Contact
 For any issues or queries, open an issue in the repository or contact: [princelv84@gmail.com](mailto:princelv84@gmail.com).
+
