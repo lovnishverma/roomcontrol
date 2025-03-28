@@ -52,9 +52,9 @@ Built on a **modern tech stack** leveraging **MQTT, WebSockets, SQLite, and Expr
 | IoT Vendor Lock-In | **Decentralized & user-controlled** |
 
 ## 🛠️ Technologies Used
-- **Backend:** Express.js, SQLite, MQTT  
+- **Backend:** Express.js, SQLite
 - **Frontend:** EJS, Bootstrap  
-- **Communication Protocol:** WebSockets  
+- **Communication Protocol:** MQTT, WebSockets  
 - **Embedded:** ESP8266, HiveMQ Cloud MQTT  
 - **Security:** bcrypt, express-session  
 
