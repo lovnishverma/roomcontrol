@@ -1,7 +1,7 @@
-# Room Control System
+# Room Control System (Smart Home Control App)
 
 ## Overview
-The **Room Control System** is a fully **open-source IoT-based web application** designed to **control and monitor electrical appliances in real time**. Built using **MQTT, SQLite, WebSockets, and EJS**, it provides **seamless control, automation, and real-time feedback** via a web interface. Unlike proprietary smart home platforms, this system is designed to be low-cost, highly customizable, and independent of third-party services such as Blynk IoT, voice assistants like Alexa and Google Home, or cloud-based automation tools.
+The **Room Control System** (Smart Home Control App) is a fully **open-source IoT-based web application** designed to **control and monitor electrical appliances in real-time**. Built using **MQTT, SQLite, WebSockets, and EJS**, it provides **seamless control, automation, and real-time feedback** via a web interface. Unlike proprietary smart home platforms, this system is designed to be low-cost, highly customizable, and independent of third-party services like Blynk IoT, Alexa, Google Home, or cloud-based automation tools.
 
 With **secure user authentication**, **historical logging**, and **voice command support**, this system is ideal for **home automation, smart classrooms, research projects, and industrial control applications**. The lightweight architecture ensures it runs efficiently on **ESP8266-based IoT devices** while allowing easy integration with **local or cloud-based MQTT brokers**.
 
@@ -17,26 +17,26 @@ Designed with **flexibility in mind**, the system can be **self-hosted** on a Ra
 [Live Demo](https://roomcontrol.glitch.me/login) | [GitHub Repository](https://github.com/lovnishverma/roomcontrol) 😊
 
 ## Features
-- **Real-time Control & Monitoring:** Users can toggle the relay switch remotely from anywhere in the world over the Internet, regardless of the network.
+- **Real-time Control & Monitoring:** Toggle the relay switch remotely from anywhere over the Internet.
 - **Web-Based Dashboard:** Access historical control data through an intuitive web interface.
 - **MQTT Communication:** Secure communication with the ESP8266-based relay module.
 - **User Authentication:** Secure login for authorized control.
 - **Historical Logging:** Keeps a log of all switch actions with timestamps and usernames.
-- **Voice Control:** Supports direct voice commands (`ON`, `OFF`, `STATUS`) without needing Alexa, Google Assistant, or other third-party voice assistants.
+- **Voice Control:** Supports direct voice commands (`ON`, `OFF`, `STATUS`) without needing Alexa or Google Assistant.
 - **Automated Scheduling:** Set predefined schedules for lights to turn ON/OFF automatically.
 - **Open-Source & Customizable:** Modify and extend functionalities as needed.
 - **Local Hosting Option:** Can function without cloud dependency.
 
 ## Problems with Existing Systems
-- **Require External Apps:** Many existing smart home systems require users to install mobile applications, which can be inconvenient.
-- **Expensive Smart Home Hubs:** Voice-controlled systems often depend on costly devices like Amazon Alexa or Google Home.
-- **Proprietary Hardware Costs:** Most smart home systems use expensive, proprietary components, making them less accessible.
+- **Require External Apps:** Many existing smart home systems require users to install mobile applications.
+- **Expensive Smart Home Hubs:** Voice-controlled systems depend on costly devices like Alexa or Google Home.
+- **Proprietary Hardware Costs:** Many systems use expensive, proprietary components.
 - **Limited Customization:** Many commercial IoT solutions do not allow customization or modification.
 - **Cloud Dependency:** Many smart home systems stop working if cloud services go down.
 
 ## Advantages of the Proposed System
-- **Web-Based Control:** No need to install any external app; access control via a browser.
-- **No Alexa/Google Home Required:** Built-in voice command support without additional AI assistant devices.
+- **Web-Based Control:** No need for external apps; access control via a browser.
+- **No Alexa/Google Home Required:** Built-in voice command support without AI assistants.
 - **Affordable Hardware:** Uses an ESP8266 module, significantly reducing costs.
 - **Independent of Cloud Services:** Can be hosted locally for offline usage.
 - **Fully Open-Source:** Encourages contributions, modifications, and self-hosting.
@@ -71,14 +71,13 @@ cd roomcontrol
 npm install
 ```
 
-### 3. Configure Environment Variables
+### 3. Configure Environment Variables (MQTT credentials for HiveMQ Cloud can be found in the HiveMQ Console.)
 Create a `.env` file in the root directory and add:
 ```ini
-MQTT_SERVER=your-mqtt-server
-MQTT_PORT=8883
-MQTT_USER=your-mqtt-username
-MQTT_PASSWORD=your-mqtt-password
-SESSION_SECRET=your_secret_key
+MQTT_BROKER_URL=mqtts://1b29169c90f24560b78deaxxxxxxxxxx.s1.eu.hivemq.cloud
+MQTT_USERNAME=nielxxxxx
+MQTT_PASSWORD=Mqxxxxxxxxx
+SESSION_SECRET=axxxx
 ```
 
 ### 4. Start the Server
@@ -118,11 +117,6 @@ Upload the firmware using Arduino IDE.
 | `/app-status` | GET | Retrieves the switch status |
 | `/send-command` | POST | Sends command `{ command: '1' | '0' }` |
 | `/historic-data` | GET | Retrieves historical data |
-
-## MQTT Communication
-The system listens to MQTT topic **`212`**, processing incoming messages as follows:
-- **Message `1`** → Light **ON**
-- **Message `0`** → Light **OFF**
 
 ## WebSocket Events
 - **`newEntry`** → Broadcasts new historical data
