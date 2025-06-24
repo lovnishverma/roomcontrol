@@ -1,5 +1,8 @@
 # Room Control System (Next-Gen Smart Home Automation)
 
+![poster](https://github.com/user-attachments/assets/2b1131e9-3ba2-44ae-81d6-77204dc058be)
+
+
 ## 🚀 Overview
 The **Room Control System** is a **next-generation, open-source IoT-based automation platform** designed to **control and monitor electrical appliances in real-time**. Unlike traditional smart home systems, this solution is **cost-effective, cloud-independent, and fully customizable**—empowering users with **unparalleled control and security** over their smart environments. 
 
