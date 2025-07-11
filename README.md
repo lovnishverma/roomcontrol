@@ -20,7 +20,7 @@ Built on a **modern tech stack** leveraging **MQTT, WebSockets, SQLite, and Expr
 - **Designed for Scalability** – Adaptable to **industrial automation, smart classrooms, and home automation**.
 
 🔹 **Live Deployment:**  
-🌐 **[Room Control (Live Demo)](https://roomcontrol.glitch.me/login)**  
+🌐 **[Room Control (Live Demo)](https://roomcontrol.onrender.com/)**  
 📂 **[GitHub Repository](https://github.com/lovnishverma/roomcontrol)**  
 
 **HOMEPAGE:**
